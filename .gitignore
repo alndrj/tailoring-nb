@@ -1,0 +1,30 @@
+# Dependencies - installed packages, can be re-downloaded anytime
+node_modules/
+
+# Build output - generated files, not source code
+dist/
+build/
+.next/
+out/
+
+# Environment files - contain passwords and secret keys
+.env
+.env.local
+.env.*.local
+
+# Log files
+*.log
+
+# TypeScript incremental build cache
+*.tsbuildinfo
+
+# Test coverage reports
+coverage/
+
+# Windows / macOS junk files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Editor settings (personal, not part of the project)
+.idea/
