@@ -1,8 +1,6 @@
 # STATE — Tailoring NB
 
-Updated: 1405/06/23 · Session 2
-
-> Paste this file + RULES.md at the start of every new chat session.
+Updated: 1405/06/24 · Session 3
 
 ---
 
@@ -20,8 +18,19 @@ PowerShell execution policy: RemoteSigned (CurrentUser)
 | npm            | 10.9.4   | ✅ verified                                         |
 | pnpm           | 12.4.1   | ✅ verified                                         |
 | Docker Desktop | 29.8.0   | ✅ hello-world passed                               |
-| Git            | 2.5x     | ✅ updated, name/email set, init.defaultBranch=main |
-| GitHub account | —        | ⬜ not created yet                                  |
+| Git            | 2.55.0   | ✅ updated, name/email set, init.defaultBranch=main |
+| GitHub account | alndrj   | ✅ created                                          |
+
+---
+
+## 0.5 Git / GitHub
+
+Remote name: origin
+Remote URL: https://github.com/alndrj/tailoring-nb.git
+Visibility: private
+Branch: main (upstream tracking already set — plain `git push` works)
+Auth: Git Credential Manager, already authorized on this machine
+Public showcase repo: ⬜ not created yet (see D11)
 
 ---
 
@@ -41,19 +50,26 @@ Native technology NOT chosen yet (deferred on purpose).
 
 ## 2. Where we are
 
-Phase: 0 — Environment setup
-Current step: 0.1.5 — GitHub account + first repo (not started)
-Last commit: none
+Phase: 0 — Environment + skeleton
+Current step: 0.2.3 — root package.json + pnpm-workspace.yaml (not started)
+Last commit: 1926dfc — chore: add project rules, state and gitignore files
 
 ---
 
-## 2.5 Project structure (skeleton only)
+## 2.5 Project structure
 
 E:\Codes\tailoring-nb
-├── STATE.md ← project memory, pasted/uploaded at session start
-└── RULES.md ← how the assistant must work
+├── apps/
+│ ├── api/ ← NestJS backend (empty)
+│ └── web/ ← Next.js frontend (empty)
+├── packages/
+│ └── shared/ ← shared types/utils (empty)
+├── .gitignore
+├── RULES.md ← how the assistant must work
+└── STATE.md ← project memory, pasted at session start
 
-(nothing else yet)
+> NOTE: the 3 folders above are still empty, so Git does not track them yet.
+> Git tracks files, not folders. They will appear on GitHub with their first file.
 
 > RULE: list folders + key files only.
 > Never list node_modules, .git, dist, .next, or routine repeated files.
@@ -69,14 +85,17 @@ E:\Codes\tailoring-nb
 - 0.1.2 — pnpm installed globally
 - 0.1.3 — Docker Desktop installed, hello-world container ran OK
 - 0.1.4 — Git updated, user.name / user.email set, default branch = main
+- 0.1.5 — GitHub account + private repo created, remote `origin` added,
+  first commit pushed to `main`
+- 0.2.1 — monorepo folder skeleton created (apps/api, apps/web, packages/shared)
 
 ---
 
 ## 4. Next 3 steps only
 
-1. 0.1.5 — GitHub account + create private repo + first commit
-2. 0.2.1 — pnpm workspace skeleton (root package.json, folders)
-3. 0.2.2 — PostgreSQL container via docker-compose
+1. 0.2.3 — root package.json + pnpm-workspace.yaml (defines the monorepo)
+2. 0.2.4 — root tsconfig.json (shared TypeScript settings)
+3. 0.3.1 — PostgreSQL container via docker-compose.yml
 
 > Never plan more than 3 steps ahead.
 > Decide the next block only when the current one is finished.
@@ -99,6 +118,7 @@ E:\Codes\tailoring-nb
 | D10 | PostgreSQL runs in Docker, never installed on the OS              | laptop env == server env, no surprises on deploy    |
 | D11 | Two GitHub repos: one private (real code), one public (showcase)  | keep business logic private, still have a portfolio |
 | D12 | Only 2 markdown files: STATE.md + RULES.md. No LEARN.md           | user takes their own handwritten notes              |
+| D13 | Monorepo layout: `apps/` = runnable apps, `packages/` = shared    | industry convention, instantly readable by anyone   |
 
 ---
 
@@ -143,6 +163,7 @@ E:\Codes\tailoring-nb
 - App name and domain: not chosen
 - Target city / market: not decided
 - Multi-tailor per workshop: assume yes in DB design, build UI later
+- Public showcase repo (D11): not created yet
 
 ---
 
