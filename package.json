@@ -1,0 +1,16 @@
+{
+  "name": "tailoring-nb",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Digital notebook for tailors",
+  "scripts": {
+    "hello": "echo Monorepo is alive"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "packageManager": "pnpm@12.4.1",
+  "devDependencies": {
+    "typescript": "^7.0.2"
+  }
+}
