@@ -97,6 +97,9 @@ E:\Codes\tailoring-nb
   never run directly, only extended by child packages.
 - 0.2.5 — typescript 7.0.2 installed as devDependency at root (-D -w).
   No root-level typecheck script: each package will typecheck itself.
+- 0.3.2 — docker-compose.yml created at root: one service "db"
+  (postgres:17, container tailoring-db, host port 5433 -> 5432,
+  named volume tailoring_db_data). Not started yet.
 
 ---
 
@@ -104,7 +107,7 @@ E:\Codes\tailoring-nb
 
 1. 0.3.1 — docker-compose.yml with a PostgreSQL container
 2. 0.3.2 — .env + .env.example for DB credentials
-3. 0.3.3 — connect to the running DB and confirm it answers
+3. 0.3.3 — start the container and verify Postgres is really running
 
 > Never plan more than 3 steps ahead.
 > Decide the next block only when the current one is finished.
