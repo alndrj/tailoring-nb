@@ -8,9 +8,10 @@ services:
       POSTGRES_USER: tailoring
       POSTGRES_PASSWORD: tailoring_dev_pass
       POSTGRES_DB: tailoring_nb
-    # host port 5433 -> container port 5432
     ports:
-      - "5433:5432"
+      # host port 15432 -> container port 5432
+      # 5433 was inside a Hyper-V reserved port range on this machine
+      - "15432:5432"
     # named volume keeps data alive between restarts
     volumes:
       - tailoring_db_data:/var/lib/postgresql/data
