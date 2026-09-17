@@ -56,7 +56,7 @@ Native technology NOT chosen yet (deferred on purpose).
 ## 2. Where we are
 
 Phase: 0 — Environment + skeleton
-Current step: 0.3.5 — move DB credentials into .env + .env.example
+Current step: 0.3.6 — add pnpm scripts for db:up / db:down / db:logs
 Blockers: none
 
 ---
@@ -75,6 +75,8 @@ E:\Codes\tailoring-nb
 ├── pnpm-workspace.yaml ← declares which folders are packages
 ├── pnpm-lock.yaml ← exact versions of every installed package
 ├── tsconfig.json ← base TS rules, inherited by all packages
+├── .env ← real secrets, NEVER committed
+├── .env.example ← template with fake values, committed
 ├── RULES.md
 └── STATE.md
 
@@ -109,14 +111,18 @@ E:\Codes\tailoring-nb
 - 0.3.4 — connected to Postgres with:
   docker compose exec db psql -U tailoring -d tailoring_nb
   verified: SELECT version() works, database "tailoring_nb" exists, no tables yet
+- 0.3.5 — moved DB credentials to .env, added .env.example template,
+  docker-compose.yml now uses ${VAR} placeholders
+  verified with: docker compose config (values resolved correctly)
+  verified .env is git-ignored
 
 ---
 
 ## 4. Next 3 steps only
 
-- 0.3.5 — move DB credentials into .env + .env.example, reference them from docker-compose.yml
 - 0.3.6 — add pnpm scripts: db:up / db:down / db:logs (no new packages)
 - 0.4.1 — create apps/api folder with NestJS (packages to be approved first)
+- 0.4.2 — create apps/api skeleton
 
 Never plan more than 3 steps ahead. Decide the next block only when the current one is finished.
 
@@ -139,6 +145,9 @@ Never plan more than 3 steps ahead. Decide the next block only when the current 
 | D13 | Monorepo layout: `apps/` = runnable apps, `packages/` = shared    | industry convention, instantly readable by anyone                               |
 | D14 | Root tsconfig is a base config only, never compiled directly      | root has no source files; each package typechecks itself                        |
 | D15 | Postgres exposed on HOST port 15432 (not 5432/5433)               | 5433 was inside a Hyper-V reserved range on this Windows machine; 15432 is free |
+
+| D16 | secrets live in .env (git-ignored). Every new variable must also be
+added to .env.example with a fake/placeholder value.
 
 ---
 
