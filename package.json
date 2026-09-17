@@ -4,7 +4,12 @@
   "private": true,
   "description": "Digital notebook for tailors",
   "scripts": {
-    "hello": "echo Monorepo is alive"
+    "hello": "echo Monorepo is alive",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "db:logs": "docker compose logs -f db",
+    "db:psql": "docker compose exec db psql -U tailoring -d tailoring_nb",
+    "db:reset": "docker compose down -v && docker compose up -d"
   },
   "engines": {
     "node": ">=22.0.0"

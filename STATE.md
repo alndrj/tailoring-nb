@@ -1,6 +1,6 @@
 # STATE — Tailoring NB
 
-Updated: 1405/06/25 · Session 3
+Updated: 1405/06/26 · Session 3
 
 ---
 
@@ -25,6 +25,13 @@ PowerShell execution policy: RemoteSigned (CurrentUser)
 DB (local dev): host=localhost port=15432 user=tailoring
 password=tailoring_dev_pass database=tailoring_nb
 (inside Docker network the port is 5432 — see D15)
+
+Common commands:
+pnpm db:up start the database
+pnpm db:down stop the database
+pnpm db:logs watch database logs (Ctrl+C to exit)
+pnpm db:psql open a SQL shell
+pnpm db:reset DESTROY all data and start fresh
 
 ---
 
@@ -56,7 +63,7 @@ Native technology NOT chosen yet (deferred on purpose).
 ## 2. Where we are
 
 Phase: 0 — Environment + skeleton
-Current step: 0.3.6 — add pnpm scripts for db:up / db:down / db:logs
+Current step: 0.4.1 — decide and approve the package list for the NestJS API
 Blockers: none
 
 ---
@@ -115,39 +122,45 @@ E:\Codes\tailoring-nb
   docker-compose.yml now uses ${VAR} placeholders
   verified with: docker compose config (values resolved correctly)
   verified .env is git-ignored
+- 0.3.6 — added pnpm scripts in root package.json:
+  db:up / db:down / db:logs / db:psql / db:reset
+  no new packages installed
+  verified: db:up, db:logs, db:psql, db:down all work
 
 ---
 
 ## 4. Next 3 steps only
 
-- 0.3.6 — add pnpm scripts: db:up / db:down / db:logs (no new packages)
-- 0.4.1 — create apps/api folder with NestJS (packages to be approved first)
-- 0.4.2 — create apps/api skeleton
+- 0.4.1 — decide and approve the package list for the NestJS API
+- 0.4.2 — create apps/api skeleton and make it start on a port
+- 0.4.3 — add a health endpoint and verify it in the browser
 
 Never plan more than 3 steps ahead. Decide the next block only when the current one is finished.
 
 ## 5. Locked decisions (do NOT change without explicit discussion)
 
-| #   | Decision                                                          | Why                                                                             |
-| --- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| D1  | Money = integer, Rial only. No floats.                            | floats lose precision on money                                                  |
-| D2  | IDs = UUID (text), not auto-increment numbers                     | safe for sync + multi-device later                                              |
-| D3  | Every DB query filtered by `workshopId`                           | each workshop must never see another's data                                     |
-| D4  | Soft delete: `deletedAt` column, never hard delete                | user deletes a customer by mistake → recoverable                                |
-| D5  | Dates stored UTC, displayed Jalali (شمسی)                         | storage and display are different concerns                                      |
-| D6  | No Persian text hardcoded in code. All UI text in one i18n file   | needed for future multi-language + easy edits                                   |
-| D7  | API (NestJS) and UI (Next.js) fully separate                      | any future mobile app can plug into the same API                                |
-| D8  | No new npm package without asking the user first                  | user must understand every dependency                                           |
-| D9  | All code comments in English. All explanations to user in Persian | code stays standard, learning stays clear                                       |
-| D10 | PostgreSQL runs in Docker, never installed on the OS              | laptop env == server env, no surprises on deploy                                |
-| D11 | Two GitHub repos: one private (real code), one public (showcase)  | keep business logic private, still have a portfolio                             |
-| D12 | Only 2 markdown files: STATE.md + RULES.md. No LEARN.md           | user takes their own handwritten notes                                          |
-| D13 | Monorepo layout: `apps/` = runnable apps, `packages/` = shared    | industry convention, instantly readable by anyone                               |
-| D14 | Root tsconfig is a base config only, never compiled directly      | root has no source files; each package typechecks itself                        |
-| D15 | Postgres exposed on HOST port 15432 (not 5432/5433)               | 5433 was inside a Hyper-V reserved range on this Windows machine; 15432 is free |
+| #   | Decision                                                            | Why                                                                             |
+| --- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| D1  | Money = integer, Rial only. No floats.                              | floats lose precision on money                                                  |
+| D2  | IDs = UUID (text), not auto-increment numbers                       | safe for sync + multi-device later                                              |
+| D3  | Every DB query filtered by `workshopId`                             | each workshop must never see another's data                                     |
+| D4  | Soft delete: `deletedAt` column, never hard delete                  | user deletes a customer by mistake → recoverable                                |
+| D5  | Dates stored UTC, displayed Jalali (شمسی)                           | storage and display are different concerns                                      |
+| D6  | No Persian text hardcoded in code. All UI text in one i18n file     | needed for future multi-language + easy edits                                   |
+| D7  | API (NestJS) and UI (Next.js) fully separate                        | any future mobile app can plug into the same API                                |
+| D8  | No new npm package without asking the user first                    | user must understand every dependency                                           |
+| D9  | All code comments in English. All explanations to user in Persian   | code stays standard, learning stays clear                                       |
+| D10 | PostgreSQL runs in Docker, never installed on the OS                | laptop env == server env, no surprises on deploy                                |
+| D11 | Two GitHub repos: one private (real code), one public (showcase)    | keep business logic private, still have a portfolio                             |
+| D12 | Only 2 markdown files: STATE.md + RULES.md. No LEARN.md             | user takes their own handwritten notes                                          |
+| D13 | Monorepo layout: `apps/` = runnable apps, `packages/` = shared      | industry convention, instantly readable by anyone                               |
+| D14 | Root tsconfig is a base config only, never compiled directly        | root has no source files; each package typechecks itself                        |
+| D15 | Postgres exposed on HOST port 15432 (not 5432/5433)                 | 5433 was inside a Hyper-V reserved range on this Windows machine; 15432 is free |
+| D16 | secrets live in .env (git-ignored). Every new variable must also be |
 
-| D16 | secrets live in .env (git-ignored). Every new variable must also be
 added to .env.example with a fake/placeholder value.
+D17 — all repeated terminal commands become pnpm scripts in root package.json.
+Never type a long docker/psql command by hand. Prefix by area: db: / api: / web:
 
 ---
 
