@@ -56,7 +56,7 @@ Native technology NOT chosen yet (deferred on purpose).
 ## 2. Where we are
 
 Phase: 0 — Environment + skeleton
-Current step: 0.3.4 — connect to Postgres with psql and run the first SQL command
+Current step: 0.3.5 — move DB credentials into .env + .env.example
 Blockers: none
 
 ---
@@ -105,16 +105,20 @@ E:\Codes\tailoring-nb
   named volume tailoring_db_data)
 - 0.3.3 — container started successfully; logs show
   "ready to accept connections"
+- 0.2.2 / 0.3.1 — numbering skipped, no work item
+- 0.3.4 — connected to Postgres with:
+  docker compose exec db psql -U tailoring -d tailoring_nb
+  verified: SELECT version() works, database "tailoring_nb" exists, no tables yet
 
 ---
 
 ## 4. Next 3 steps only
 
-- 0.3.4 — enter the container and run the first SQL command (psql)
 - 0.3.5 — move DB credentials into .env + .env.example, reference them from docker-compose.yml
 - 0.3.6 — add pnpm scripts: db:up / db:down / db:logs (no new packages)
+- 0.4.1 — create apps/api folder with NestJS (packages to be approved first)
 
-## Never plan more than 3 steps ahead. Decide the next block only when the current one is finished.
+Never plan more than 3 steps ahead. Decide the next block only when the current one is finished.
 
 ## 5. Locked decisions (do NOT change without explicit discussion)
 
