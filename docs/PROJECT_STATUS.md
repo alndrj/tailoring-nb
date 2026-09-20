@@ -25,7 +25,7 @@ their orders, and the money.
 | Block            | 0.6 — documentation restructure                  |
 | Current step     | 0.6.7 — retire the old `STATE.md` and `RULES.md` |
 | Blockers         | none                                             |
-| Currently broken | `apps/api` does not type-check — see §7, item 1  |
+| Currently broken | nothing                                          |
 
 ---
 
@@ -46,11 +46,11 @@ Nothing is lost. Where each part went is recorded in `HISTORY.md`, block 0.6.
 
 ## 4. Next 3 steps only
 
-| Step      | File                     | Goal                                                      |
-| --------- | ------------------------ | --------------------------------------------------------- |
-| 0.4.3-fix | `apps/api/tsconfig.json` | make the type check pass — it currently fails with TS5110 |
-| 0.4.4b    | `apps/api/src/main.ts`   | the bootstrap file: the switch that starts the app        |
-| 0.4.4c    | `apps/api/nest-cli.json` | tell the Nest tooling where the source lives              |
+| Step   | File                             | Goal                                               |
+| ------ | -------------------------------- | -------------------------------------------------- | --- |
+| 0.4.4b | `apps/api/src/main.ts`           | the bootstrap file: the switch that starts the app |
+| 0.4.4c | `apps/api/nest-cli.json`         | tell the Nest tooling where the source lives       |
+| 0.4.5  | `apps/api/src/app.controller.ts` | a health endpoint that answers in the browser      |     |
 
 Goal of block 0.4 as a whole: the API server actually starts and prints its port.
 
@@ -68,9 +68,9 @@ E:\Codes\tailoring-nb
 ├── apps/
 │   ├── api/                   ← NestJS backend · package @tailoring/api
 │   │   ├── src/
-│   │   │   └── app.module.ts  ← created, NOT yet verified
-│   │   ├── package.json       ← no scripts yet (§7 item 2)
-│   │   └── tsconfig.json      ← currently invalid (§7 item 1)
+│   │   │   └── app.module.ts  ← verified
+│   │   ├── package.json       ← ESM (D27) · has dev/build/start scripts
+│   │   └── tsconfig.json      ← valid
 │   └── web/                   ← Next.js frontend · empty, no package.json yet
 ├── packages/
 │   └── shared/                ← shared types and utils · empty, no package.json yet
@@ -118,13 +118,11 @@ None of these is started. Phase 0 is still about the skeleton.
 
 Ordered by what blocks the most work right now.
 
-| #   | Issue                                                                                                                | Impact                                                                           | When to pay it                                 |
-| --- | -------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | ---------------------------------------------- |
-| 1   | `apps/api/tsconfig.json` is invalid: `module: commonjs` with `moduleResolution: node16` is not a legal pair (TS5110) | nothing in `apps/api` can be type-checked or built                               | step 0.4.3-fix, next                           |
-| 2   | `apps/api/package.json` has no `scripts` section                                                                     | the API cannot be started with a command yet                                     | step 0.4.4d                                    |
-| 3   | `.env` has no `DATABASE_URL`                                                                                         | Prisma cannot connect                                                            | step 0.4.6, before the first migration         |
-| 4   | `apps/web` and `packages/shared` have no `package.json`                                                              | pnpm does not see them as workspaces, so `--filter` cannot target them           | when each one is actually started              |
-| 5   | The old `STATE.md` contained the local DB password in plain text, and it is already in the git history               | harmless while the repo is private; unacceptable the moment a public repo exists | before creating the public showcase repo (D11) |
+| #   | Issue                                                                                                  | Impact                                                                           | When to pay it                                 |
+| --- | ------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------- | ---------------------------------------------- |
+| 1   | `.env` has no `DATABASE_URL`                                                                           | Prisma cannot connect                                                            | step 0.4.6, before the first migration         |
+| 2   | `apps/web` and `packages/shared` have no `package.json`                                                | pnpm does not see them as workspaces, so `--filter` cannot target them           | when each one is actually started              |
+| 3   | The old `STATE.md` contained the local DB password in plain text, and it is already in the git history | harmless while the repo is private; unacceptable the moment a public repo exists | before creating the public showcase repo (D11) |
 
 ---
 

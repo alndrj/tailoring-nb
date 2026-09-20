@@ -109,32 +109,35 @@ points to `.env`. Recorded as D26.
 
 ---
 
-## Work in progress — not yet finished
+### Block 0.4 — continued
 
-### Step 0.4.4a — root module of the API
+| Step      | What was done                                                                                                                 | Verified by                                                        |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| 0.4.4a    | `apps/api/src/app.module.ts` created: an `AppModule` class with `@Module({ imports: [], controllers: [], providers: [] })`    | `tsc --noEmit` passed with no output, after step 0.4.3-fix         |
+| 0.4.3-fix | `"type": "module"` added to `apps/api/package.json`, making the whole API package ESM (D27). `tsconfig.json` needed no change | `pnpm --filter @tailoring/api exec tsc --noEmit` returned silently |
 
-`apps/api/src/app.module.ts` was created, containing an `AppModule` class with
-`@Module({ imports: [], controllers: [], providers: [] })`.
+**Trap — NestJS 12 is pure ESM, and the failure arrives in two layers.**
 
-**The file exists, but the step is NOT done: its test command has never passed.**
+First layer: `error TS5110 — 'module' must be set to 'Node16' when
+'moduleResolution' is set to 'Node16'`. Cause: `module` was `commonjs` while
+`moduleResolution` was `node16`. TypeScript 7 requires them to be a matching pair.
+Fixed by setting both to `node16`.
 
-Running the type check:
+Second layer, only visible after the first was fixed:
+`error TS1479 — the referenced file is an ECMAScript module and cannot be
+imported with 'require'`. Cause: with `module: node16`, a file's module type is
+decided by the nearest `package.json`. `apps/api/package.json` had no `"type"`
+field, and a missing `"type"` means CommonJS. Meanwhile `@nestjs/common` declares
+`"type": "module"` with no CommonJS fallback.
+Fixed by adding `"type": "module"` to `apps/api/package.json`.
 
-```
-pnpm --filter @tailoring/api exec tsc --noEmit
-```
+**Lesson: a missing `"type"` field is not an open question — it is an explicit
+answer, and that answer is CommonJS.**
 
-produced:
-
-```
-tsconfig.json:8:15 - error TS5110: Option 'module' must be set to 'Node16'
-when option 'moduleResolution' is set to 'Node16'.
-```
-
-The error is in `apps/api/tsconfig.json`, not in `app.module.ts`. TypeScript 7
-requires `module` and `moduleResolution` to be a matching pair, and
-`commonjs` + `node16` is not a valid pair.
-
-This is the first thing to fix when documentation work is complete. Nothing about
-`app.module.ts` has been verified yet, so no decision about the fix has been
-locked — a decision is only recorded after its test passes.
+**Documentation had drifted from reality.**
+Two facts recorded in `PROJECT_STATUS.md` turned out to be stale: TS5110 was
+listed as broken although it had already been fixed in an earlier session, and
+`apps/api/package.json` was listed as having no scripts although `dev`, `build`
+and `start` were already there. Both were found only by reading the real files
+with `Get-Content` instead of trusting the notes.
+**Lesson: before fixing something the docs call broken, look at the actual file.**
