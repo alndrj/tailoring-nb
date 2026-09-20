@@ -9,7 +9,9 @@
     "db:down": "docker compose down",
     "db:logs": "docker compose logs -f db",
     "db:psql": "docker compose exec db psql -U tailoring -d tailoring_nb",
-    "db:reset": "docker compose down -v && docker compose up -d"
+    "db:reset": "docker compose down -v && docker compose up -d",
+    "api:dev": "pnpm --filter @tailoring/api run dev",
+    "api:build": "pnpm --filter @tailoring/api run build"
   },
   "engines": {
     "node": ">=22.0.0"

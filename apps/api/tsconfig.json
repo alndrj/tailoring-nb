@@ -1,0 +1,39 @@
+{
+  // Start from the shared rules at the repo root
+  "extends": "../../tsconfig.json",
+
+  "compilerOptions": {
+    // NestJS needs CommonJS output.
+    // We DON'T write "commonjs" here: with node16 + no "type":"module"
+    // in apps/api/package.json, TypeScript already emits CommonJS,
+    // and we keep modern package "exports" resolution.
+    "module": "node16",
+    "moduleResolution": "node16",
+
+    // Safety net: if the base config turns this on, ESM syntax
+    // inside CommonJS files would be rejected. Nest needs it off.
+    "verbatimModuleSyntax": false,
+
+    // Needed so `import { X } from 'cjs-package'` works
+    "esModuleInterop": true,
+
+    // Make Node's globals visible: process, __dirname, Buffer, ...
+    "types": ["node"],
+
+    // Required by NestJS: keep the @decorator labels alive
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+
+    // This is a runnable app, not a library: no .d.ts files needed
+    "declaration": false,
+    "declarationMap": false,
+    "composite": false,
+
+    // Where code comes from and where the compiled output goes
+    "rootDir": "./src",
+    "outDir": "./dist"
+  },
+
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

@@ -1,0 +1,165 @@
+# ENVIRONMENT — machines, versions, ports, commands
+
+> Facts only. No rules (see `RULES.md`), no reasoning (see `DECISIONS.md`).
+> Whenever a version, port or script changes, update it here in the SAME commit.
+>
+> Last verified: 2026-09-19 (1405/06/28)
+
+---
+
+## 1. Machine
+
+|                             |                              |
+| --------------------------- | ---------------------------- |
+| OS                          | Windows 11 (native)          |
+| Editor                      | VS Code                      |
+| Terminal                    | PowerShell, inside VS Code   |
+| PowerShell execution policy | `RemoteSigned` (CurrentUser) |
+| Project path                | `E:\Codes\tailoring-nb`      |
+
+Docker uses WSL2 internally. The user never types commands inside WSL.
+
+---
+
+## 2. Tool versions
+
+| Tool           | Version            | Verified how                                            |
+| -------------- | ------------------ | ------------------------------------------------------- |
+| Node.js        | `v22.21.0`         | `node -v`                                               |
+| npm            | `10.9.4`           | `npm -v`                                                |
+| pnpm           | `12.4.1`           | `pnpm -v`                                               |
+| Docker Desktop | `29.8.0`           | `docker --version` · hello-world container passed       |
+| Git            | `2.55.0.windows.5` | `git --version`                                         |
+| TypeScript     | `7.0.2`            | root devDependency                                      |
+| Prisma CLI     | `7.10.0`           | `prisma --version` → reports `Operating System : win32` |
+| `@nestjs/core` | `12.0.3`           | `pnpm --filter @tailoring/api list @nestjs/core`        |
+
+Git is configured with `user.name`, `user.email`, and `init.defaultBranch = main`.
+
+---
+
+## 3. Packages in the monorepo
+
+| Path              | Package name     | State        |
+| ----------------- | ---------------- | ------------ |
+| `apps/api`        | `@tailoring/api` | in progress  |
+| `apps/web`        | not created yet  | empty folder |
+| `packages/shared` | not created yet  | empty folder |
+
+The full approved dependency list for `apps/api` lives in `DECISIONS.md` → D18.
+
+---
+
+## 4. Ports
+
+| Service       | Host port       | Container port | Source                               |
+| ------------- | --------------- | -------------- | ------------------------------------ |
+| PostgreSQL    | `15432`         | `5432`         | `${DB_PORT}` in `docker-compose.yml` |
+| API (NestJS)  | not decided yet | —              | will be set in step 0.4.4            |
+| Web (Next.js) | not decided yet | —              | phase 1                              |
+
+Host port `5433` is unusable on this machine: it falls inside a Hyper-V reserved
+port range. See `DECISIONS.md` → D15.
+
+---
+
+## 5. Database (local development)
+
+|                |                                                  |
+| -------------- | ------------------------------------------------ |
+| Engine image   | `postgres:17`                                    |
+| Container name | `tailoring-db`                                   |
+| Restart policy | `unless-stopped`                                 |
+| Named volume   | `tailoring_db_data` → `/var/lib/postgresql/data` |
+| Host           | `localhost`                                      |
+| Host port      | `15432`                                          |
+| Database name  | `tailoring_nb`                                   |
+| User           | `tailoring`                                      |
+| Password       | in `.env` → `POSTGRES_PASSWORD`                  |
+
+Data survives `pnpm db:down` because it lives in the named volume,
+not inside the container.
+
+### Environment variables used by `docker-compose.yml`
+
+| Variable            | Purpose                                             |
+| ------------------- | --------------------------------------------------- |
+| `POSTGRES_USER`     | database user                                       |
+| `POSTGRES_PASSWORD` | database password                                   |
+| `POSTGRES_DB`       | database name created on first start                |
+| `DB_PORT`           | host port mapped to container port 5432             |
+| `DATABASE_URL`      | NOT PRESENT YET — Prisma will need it in step 0.4.6 |
+
+Real values live in `.env` (git-ignored).
+Fake values live in `.env.example` (committed).
+See `DECISIONS.md` → D16.
+
+---
+
+## 6. Git / GitHub
+
+|                      |                                                            |
+| -------------------- | ---------------------------------------------------------- |
+| Remote name          | `origin`                                                   |
+| Remote URL           | `https://github.com/alndrj/tailoring-nb.git`               |
+| Visibility           | private                                                    |
+| Default branch       | `main`, upstream tracking already set                      |
+| Auth                 | Git Credential Manager, already authorized on this machine |
+| Public showcase repo | not created yet — see `DECISIONS.md` → D11                 |
+
+Because upstream tracking is set, a plain `git push` is enough.
+
+---
+
+## 7. Common commands
+
+Run every command from the repo root: `E:\Codes\tailoring-nb`
+
+### Database
+
+| Command         | What it does                                |
+| --------------- | ------------------------------------------- |
+| `pnpm db:up`    | start the database in the background        |
+| `pnpm db:down`  | stop the database (data is kept)            |
+| `pnpm db:logs`  | watch database logs live — `Ctrl+C` to exit |
+| `pnpm db:psql`  | open a SQL shell inside the container       |
+| `pnpm db:reset` | DESTROY all data and start fresh ⚠️         |
+
+### Workspace
+
+| Command                              | What it does                             |
+| ------------------------------------ | ---------------------------------------- |
+| `pnpm install`                       | install everything declared in the repo  |
+| `pnpm --filter <pkg> add <name>`     | add a dependency to ONE package          |
+| `pnpm --filter <pkg> add -D <name>`  | add a dev dependency to ONE package      |
+| `pnpm --filter <pkg> exec <cmd>`     | run a tool installed inside that package |
+| `pnpm --filter <pkg> list --depth 0` | list that package's direct dependencies  |
+
+### Type checking
+
+| Command                                          | What it does                            |
+| ------------------------------------------------ | --------------------------------------- |
+| `pnpm --filter @tailoring/api exec tsc --noEmit` | type-check the API only, write no files |
+
+No output means success.
+
+### Install-script approval
+
+| Command               | What it does                                  |
+| --------------------- | --------------------------------------------- |
+| `pnpm approve-builds` | allow a package to run its install scripts    |
+| `pnpm rebuild`        | re-run install scripts without re-downloading |
+
+Use `Space` to select, then `Enter`. Pressing `Enter` alone records a rejection.
+See `DECISIONS.md` → D20.
+
+---
+
+## 8. Notes about this machine's tooling
+
+- pnpm 12 prints `Lockfile passes supply-chain policies` on every install.
+  This is normal and needs no configuration.
+- Prisma 7 prints `Operating System : win32`. Older documentation calls this
+  line `binaryTarget` — same thing, renamed.
+- The PowerShell execution policy must stay at `RemoteSigned` or higher,
+  otherwise `pnpm.ps1` will refuse to run.

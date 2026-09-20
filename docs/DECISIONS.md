@@ -1,0 +1,91 @@
+# DECISIONS — locked decisions
+
+> Do NOT change any of these without an explicit discussion first.
+>
+> Append only. A decision is never deleted or edited in place.
+> To replace one: strike it through, mark it DEPRECATED, point it to its
+> successor, and add a new number at the end.
+>
+> Format: what we decided · why it matters if we don't
+>
+> Last updated: 2026-09-19 (1405/06/28)
+
+---
+
+## 0. Stack (locked)
+
+| Layer       | Choice                                                               |
+| ----------- | -------------------------------------------------------------------- |
+| Language    | TypeScript                                                           |
+| Backend     | NestJS                                                               |
+| Database    | PostgreSQL + Prisma — runs in Docker, never installed natively (D10) |
+| Frontend    | Next.js + Tailwind CSS                                               |
+| Repository  | monorepo, pnpm workspaces (D13)                                      |
+| UI language | Persian (fa), RTL                                                    |
+| Mobile      | PWA first. Native later — technology not chosen yet, on purpose      |
+
+Changing any row here means rewriting large parts of the project.
+Nothing in this table is revisited without an explicit discussion.
+
+---
+
+## 1. The decisions
+
+| #       | Decision                                                                                                                                                                                                                                                                                                       | Why                                                                                                                                                   |
+| ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D1      | Money = integer, Rial only. No floats.                                                                                                                                                                                                                                                                         | floats lose precision on money                                                                                                                        |
+| D2      | IDs = UUID (text), not auto-increment numbers                                                                                                                                                                                                                                                                  | safe for sync + multi-device later                                                                                                                    |
+| D3      | Every DB query filtered by `workshopId`                                                                                                                                                                                                                                                                        | each workshop must never see another's data                                                                                                           |
+| D4      | Soft delete: `deletedAt` column, never hard delete                                                                                                                                                                                                                                                             | user deletes a customer by mistake → recoverable                                                                                                      |
+| D5      | Dates stored UTC, displayed Jalali (شمسی)                                                                                                                                                                                                                                                                      | storage and display are different concerns                                                                                                            |
+| D6      | No Persian text hardcoded in code. All UI text in one i18n file                                                                                                                                                                                                                                                | needed for future multi-language + easy edits                                                                                                         |
+| D7      | API (NestJS) and UI (Next.js) fully separate                                                                                                                                                                                                                                                                   | any future mobile app can plug into the same API                                                                                                      |
+| D8      | No new npm package without asking the user first                                                                                                                                                                                                                                                               | user must understand every dependency                                                                                                                 |
+| D9      | All code comments in English. All explanations to user in Persian                                                                                                                                                                                                                                              | code stays standard, learning stays clear                                                                                                             |
+| D10     | PostgreSQL runs in Docker, never installed on the OS                                                                                                                                                                                                                                                           | laptop env == server env, no surprises on deploy                                                                                                      |
+| D11     | Two GitHub repos: one private (real code), one public (showcase)                                                                                                                                                                                                                                               | keep business logic private, still have a portfolio                                                                                                   |
+| ~~D12~~ | ~~Only 2 markdown files: STATE.md + RULES.md.~~ **DEPRECATED → see D25.** Still valid: no LEARN.md in the repo                                                                                                                                                                                                 | user takes their own handwritten notes                                                                                                                |
+| D13     | Monorepo layout: `apps/` = runnable apps, `packages/` = shared                                                                                                                                                                                                                                                 | industry convention, instantly readable by anyone                                                                                                     |
+| D14     | Root tsconfig is a base config only, never compiled directly                                                                                                                                                                                                                                                   | root has no source files; each package typechecks itself                                                                                              |
+| D15     | Postgres exposed on HOST port 15432 (not 5432/5433)                                                                                                                                                                                                                                                            | 5433 was inside a Hyper-V reserved range on this Windows machine; 15432 is free                                                                       |
+| D16     | Secrets live in `.env` (git-ignored). Every new variable must also be added to `.env.example` with a fake value                                                                                                                                                                                                | real passwords never reach GitHub; the example file tells a new developer what to fill                                                                |
+| D17     | All repeated terminal commands become pnpm scripts in root `package.json`. Prefix by area: `db:` / `api:` / `web:`                                                                                                                                                                                             | never retype long docker/psql commands; if credentials change, only one place to edit                                                                 |
+| D18     | Approved package list for `apps/api` — 15 total (see §2 below)                                                                                                                                                                                                                                                 | every dependency must be understood before it is installed                                                                                            |
+| D19     | Prisma CLI and `@prisma/client` must ALWAYS be the same version. Never install pre-release versions (rc / beta / alpha) — pin the exact version                                                                                                                                                                | mismatched versions generate client code the library cannot read; rc versions can change without warning                                              |
+| D20     | pnpm blocks package build scripts by default. Only approve packages we actually trust and need. In pnpm 12 the allowlist key is `allowBuilds` in `pnpm-workspace.yaml` (a map of name → true/false, NOT the older `onlyBuiltDependencies` list). It IS committed. Approved so far: `@prisma/engines`, `prisma` | running unknown code during install is a real security risk; keeping the list in git means every clone gets the same answer without being asked again |
+| D21     | The API tsconfig must have `experimentalDecorators` + `emitDecoratorMetadata` enabled                                                                                                                                                                                                                          | NestJS is built on decorators; without these the `@` labels are thrown away and dependency injection silently breaks                                  |
+| D22     | `strict: true` everywhere, from day one                                                                                                                                                                                                                                                                        | turning strict on later means fixing hundreds of errors at once; turning it on now means fixing them one at a time as we write                        |
+| D23     | Every package tsconfig MUST `extends` the root tsconfig and override only what it truly needs                                                                                                                                                                                                                  | one place to change a shared rule; a parallel config silently drifts away from the rest of the repo                                                   |
+| D24     | Decorator support (`experimentalDecorators` + `emitDecoratorMetadata`) lives ONLY in `apps/api/tsconfig.json`, not at the root                                                                                                                                                                                 | only NestJS needs decorators; the Next.js app does not, and every rule belongs as close as possible to where it is used                               |
+| D25     | Documentation is split into 6 files in `docs/`: RULES · PROJECT_STATUS · DECISIONS · ENVIRONMENT · GLOSSARY · HISTORY. Supersedes D12                                                                                                                                                                          | one file was doing three jobs at once, so a status rewrite risked losing locked decisions. Now only PROJECT_STATUS is rewritten; the rest only grow   |
+| D26     | No secret value is ever written into a `docs/` file — not even a local dev password. Reference the variable name in `.env` instead                                                                                                                                                                             | D11 plans a public showcase repo; good docs are the most likely thing to be copied there. Also, local passwords tend to become production passwords   |
+
+---
+
+## 2. D18 — approved package list for `apps/api`
+
+**dependencies (9)**
+
+`@nestjs/common` · `@nestjs/core` · `@nestjs/platform-express` ·
+`reflect-metadata` · `rxjs` · `@nestjs/config` ·
+`class-validator` · `class-transformer` · `@prisma/client`
+
+**devDependencies (6)**
+
+`prisma` · `typescript` · `@nestjs/cli` · `ts-node` ·
+`@types/node` · `@nestjs/schematics`
+
+**deliberately postponed** — add only when actually needed
+
+`@nestjs/swagger` · `@nestjs/jwt` + `passport` · `bcrypt` ·
+`jest` + `supertest` · `eslint` + `prettier` · `multer`
+
+---
+
+## 3. How to change a decision
+
+1. Do not edit the old row. Do not delete it.
+2. Strike the number and the text, add `DEPRECATED → see Dxx`.
+3. If part of it is still valid, say which part (see D12 for an example).
+4. Add the new decision with the next free number.
+5. Record the change in `HISTORY.md` in the same step.
