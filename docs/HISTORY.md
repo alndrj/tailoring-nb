@@ -8,7 +8,7 @@
 > This file exists so that `PROJECT_STATUS.md` can stay short, and so that a
 > problem already solved once is never debugged from zero again.
 >
-> Last updated: 2026-09-19 (1405/06/28)
+> Last updated: 2026-09-21 (1405/06/30)
 
 ---
 
@@ -175,3 +175,66 @@ real file was read with `Get-Content` and it already contains three scripts:
 recorded. They are now documented in `ENVIRONMENT.md` §7.
 The 0.4.2 row above is left untouched on purpose: `HISTORY.md` is append-only,
 so history is corrected by a later entry, never by editing an older one.
+
+---
+
+### Block 0.4 — continued (3)
+
+| Step         | What was done                                                                                                                | Verified by                                                                           |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| 0.4.4c       | `apps/api/nest-cli.json` created — tells the Nest CLI that the source root is `src` and which tsconfig to use                | `nest build` completed with no output · `apps/api/dist/` produced                     |
+| 0.4.4c-fix-a | TypeScript in `apps/api/package.json` downgraded from `^7.0.2` to an exact `6.0.3` (D28, D30)                                | the same `nest build` that had failed one minute earlier now passed unchanged         |
+| 0.4.4c-fix-b | TypeScript in the ROOT `package.json` aligned to the same exact `6.0.3`, so the editor and the build tool can never disagree | `pnpm exec tsc --version` → `Version 6.0.3` at the root                               |
+| 0.4.4c-run   | The API server was started for the first time with `pnpm api:dev`                                                            | terminal printed `API is listening on http://localhost:3001` · browser returned a 404 |
+
+**Trap — TypeScript 7.0 removed the door that the Nest CLI walks through.**
+
+What was seen: `nest build` failed instantly, while
+`tsc --noEmit` had been passing for two steps.
+
+Real cause, printed several lines ABOVE the last line of the output:
+`The installed TypeScript version (7.0.2) does not expose the programmatic
+compiler API`. A compiler has two separate entry points — the `tsc` executable
+that humans type, and a programmatic API that other PROGRAMS call. TypeScript
+7.0 ships only the first. The API is expected back in 7.1.
+
+This is why the two commands disagreed without either of them being wrong:
+
+| Entry point               | Used by                            | Present in 7.0 |
+| ------------------------- | ---------------------------------- | -------------- |
+| `tsc` CLI                 | humans, CI scripts                 | yes            |
+| programmatic compiler API | `@nestjs/cli`, `ts-node`, bundlers | no             |
+
+Fix: TypeScript pinned to `6.0.3` in both `package.json` files. Nothing else was
+touched, which is what confirms the diagnosis rather than merely working around it.
+
+**Lesson: a green `tsc --noEmit` proves the CODE is fine. It never proved the
+TOOLCHAIN is fine, and we had been reading it as if it did.**
+
+**Trap — `pnpm add -E` reported an exact version but did not write one.**
+`pnpm add -D -w -E typescript@6.0.3` printed `+ typescript 6.0.3`, yet the file
+received `"^6.0.3"`. The summary line reports the version INSTALLED; the file
+records the RANGE ACCEPTED. They are different facts and only one of them is
+binding for the future. The caret was removed by hand and `pnpm install` was
+re-run. Why `-E` had no effect on pnpm 12.4.1 is unknown and is logged as an
+open question.
+**Lesson: a tool's summary line is not the file. Open the file.**
+
+**The documentation had drifted in four more places.**
+All four were found by reading the real file instead of the notes:
+
+1. the root `package.json` already had `api:dev` and `api:build` scripts that
+   were never documented — now in `ENVIRONMENT.md` §7;
+2. `.gitignore` already covers `dist/` — confirmed by `git status` not listing
+   it after the first build. The worry recorded in `PROJECT_STATUS.md` was
+   unfounded and is now closed;
+3. the startup message is `API is listening on …`, not `… is running on …`;
+4. the port constant is named `apiPort`, not `API_PORT`. The real file is the
+   correct one here: `RULES.md` §6 reserves `SCREAMING_SNAKE_CASE` for
+   environment variables, and this is an in-code constant. The docs were fixed,
+   not the code.
+
+**Lesson: this trap is not the user's alone. In this session the ASSISTANT
+quoted the docs from memory twice — for the log message and for the port
+variable — and was wrong both times. `RULES.md` §0 already forbids it:
+never claim to have read a file that was not provided.**

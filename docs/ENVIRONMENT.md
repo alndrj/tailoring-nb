@@ -3,7 +3,7 @@
 > Facts only. No rules (see `RULES.md`), no reasoning (see `DECISIONS.md`).
 > Whenever a version, port or script changes, update it here in the SAME commit.
 >
-> Last verified: 2026-09-19 (1405/06/28)
+> Last verified: 2026-09-21 (1405/06/30)
 
 ---
 
@@ -30,7 +30,7 @@ Docker uses WSL2 internally. The user never types commands inside WSL.
 | pnpm           | `12.4.1`           | `pnpm -v`                                               |
 | Docker Desktop | `29.8.0`           | `docker --version` · hello-world container passed       |
 | Git            | `2.55.0.windows.5` | `git --version`                                         |
-| TypeScript     | `7.0.2`            | root devDependency                                      |
+| TypeScript     | `6.0.3`            | `pnpm exec tsc --version` · pinned exactly (D28, D30)   |
 | Prisma CLI     | `7.10.0`           | `prisma --version` → reports `Operating System : win32` |
 | `@nestjs/core` | `12.0.3`           | `pnpm --filter @tailoring/api list @nestjs/core`        |
 
@@ -52,11 +52,11 @@ The full approved dependency list for `apps/api` lives in `DECISIONS.md` → D18
 
 ## 4. Ports
 
-| Service       | Host port       | Container port | Source                               |
-| ------------- | --------------- | -------------- | ------------------------------------ |
-| PostgreSQL    | `15432`         | `5432`         | `${DB_PORT}` in `docker-compose.yml` |
-| API (NestJS)  | `3001`          | —              | `API_PORT` in `apps/api/src/main.ts` |
-| Web (Next.js) | `3000` reserved | —              | Next.js default · phase 1            |
+| Service       | Host port       | Container port | Source                                    |
+| ------------- | --------------- | -------------- | ----------------------------------------- |
+| PostgreSQL    | `15432`         | `5432`         | `${DB_PORT}` in `docker-compose.yml`      |
+| API (NestJS)  | `3001`          | —              | `apiPort` in `apps/api/src/main.ts` (D29) |
+| Web (Next.js) | `3000` reserved | —              | Next.js default · phase 1                 |
 
 Host port `5433` is unusable on this machine: it falls inside a Hyper-V reserved
 port range. See `DECISIONS.md` → D15.
@@ -147,15 +147,17 @@ No output means success.
 
 Declared inside `apps/api/package.json`. Run them from the repo root:
 
-| Command                              | What it does                                       |
-| ------------------------------------ | -------------------------------------------------- |
-| `pnpm --filter @tailoring/api dev`   | `nest start --watch` — restarts on every file save |
-| `pnpm --filter @tailoring/api build` | `nest build` — compiles `src/` into `dist/`        |
-| `pnpm --filter @tailoring/api start` | `node dist/main.js` — runs the compiled output     |
+| Command                              | What it does                                                                                                                    |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm --filter @tailoring/api dev`   | `nest start --watch` — restarts on every file save                                                                              |
+| `pnpm --filter @tailoring/api build` | `nest build` — compiles `src/` into `dist/`                                                                                     |
+| `pnpm --filter @tailoring/api start` | `node dist/main.js` — runs the compiled output                                                                                  |
+| `pnpm api:dev`                       | shortcut for the `dev` script above — declared in the ROOT `package.json`. Does not return to the prompt; stop it with `Ctrl+C` |
+| `pnpm api:build`                     | shortcut for the `build` script above — declared in the ROOT `package.json`                                                     |
 
-All three need `apps/api/nest-cli.json` to exist (step 0.4.4c).
-These scripts existed before they were documented — see `HISTORY.md`, block 0.4
-continued (2).
+All three need `apps/api/nest-cli.json`, created in step 0.4.4c.
+The three `apps/api` scripts and the two root shortcuts all existed before they
+were documented — see `HISTORY.md`, block 0.4 continued (2) and (3).
 
 ### Install-script approval
 
@@ -163,9 +165,6 @@ continued (2).
 | --------------------- | --------------------------------------------- |
 | `pnpm approve-builds` | allow a package to run its install scripts    |
 | `pnpm rebuild`        | re-run install scripts without re-downloading |
-
-Use `Space` to select, then `Enter`. Pressing `Enter` alone records a rejection.
-See `DECISIONS.md` → D20.
 
 ---
 
@@ -177,3 +176,6 @@ See `DECISIONS.md` → D20.
   line `binaryTarget` — same thing, renamed.
 - The PowerShell execution policy must stay at `RemoteSigned` or higher,
   otherwise `pnpm.ps1` will refuse to run.
+- `pnpm add -E` did NOT strip the caret on pnpm 12.4.1. It reported the exact
+  version but wrote a range. After pinning a version, always open the file and
+  check (D30).

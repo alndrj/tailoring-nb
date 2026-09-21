@@ -8,7 +8,7 @@
 >
 > Append only. A word is never renamed here without renaming it in the code too.
 >
-> Last updated: 2026-09-19 (1405/06/28)
+> Last updated: 2026-09-21 (1405/06/30)
 
 ---
 
@@ -43,7 +43,10 @@ These have been explained in chat with a real-world analogy. Do not explain them
 from zero again — build on them.
 
 **TypeScript:** `import` · `export` · `--noEmit` · `const` ·
-template string (backticks + `${}`) · the `.js` import rule in ESM (D27)
+template string (backticks + `${}`) · the `.js` import rule in ESM (D27) ·
+programmatic API vs CLI — two doors into the same tool: the CLI is for humans,
+the programmatic API is for other programs, and a version can ship one without
+the other (D28)
 
 **Asynchronous code:** `Promise` (the receipt you get instead of the result) ·
 `await` (wait here until the receipt becomes a real value) ·
@@ -54,7 +57,14 @@ template string (backticks + `${}`) · the `.js` import rule in ESM (D27)
 `NestFactory` (the workshop that turns the blueprint into a running app)
 
 **Tooling & infrastructure:** monorepo · workspace / package · container ·
-port mapping · named volume · environment drift
+port mapping · named volume · environment drift ·
+semantic versioning — `major.minor.patch`, where only a change in the first
+number is allowed to break things ·
+caret (`^`) — "keep the first number, take the newest of the rest" ·
+lockfile — `pnpm-lock.yaml`, the ledger of what was ACTUALLY installed, as
+opposed to `package.json` which records what was ASKED FOR ·
+watch mode — the tool stays running and rebuilds on every save, so the prompt
+never comes back; that is success, not a hang
 
 **Ways of working:** ubiquitous language · ADR (architecture decision record) ·
 post-mortem · technical debt · MVP
