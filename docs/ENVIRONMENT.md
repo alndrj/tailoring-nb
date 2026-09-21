@@ -55,8 +55,8 @@ The full approved dependency list for `apps/api` lives in `DECISIONS.md` → D18
 | Service       | Host port       | Container port | Source                               |
 | ------------- | --------------- | -------------- | ------------------------------------ |
 | PostgreSQL    | `15432`         | `5432`         | `${DB_PORT}` in `docker-compose.yml` |
-| API (NestJS)  | not decided yet | —              | will be set in step 0.4.4            |
-| Web (Next.js) | not decided yet | —              | phase 1                              |
+| API (NestJS)  | `3001`          | —              | `API_PORT` in `apps/api/src/main.ts` |
+| Web (Next.js) | `3000` reserved | —              | Next.js default · phase 1            |
 
 Host port `5433` is unusable on this machine: it falls inside a Hyper-V reserved
 port range. See `DECISIONS.md` → D15.
@@ -142,6 +142,20 @@ Run every command from the repo root: `E:\Codes\tailoring-nb`
 | `pnpm --filter @tailoring/api exec tsc --noEmit` | type-check the API only, write no files |
 
 No output means success.
+
+### API scripts
+
+Declared inside `apps/api/package.json`. Run them from the repo root:
+
+| Command                              | What it does                                       |
+| ------------------------------------ | -------------------------------------------------- |
+| `pnpm --filter @tailoring/api dev`   | `nest start --watch` — restarts on every file save |
+| `pnpm --filter @tailoring/api build` | `nest build` — compiles `src/` into `dist/`        |
+| `pnpm --filter @tailoring/api start` | `node dist/main.js` — runs the compiled output     |
+
+All three need `apps/api/nest-cli.json` to exist (step 0.4.4c).
+These scripts existed before they were documented — see `HISTORY.md`, block 0.4
+continued (2).
 
 ### Install-script approval
 

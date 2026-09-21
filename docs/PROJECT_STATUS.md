@@ -19,43 +19,43 @@ their orders, and the money.
 
 ## 2. Where we are
 
-|                  |                                                  |
-| ---------------- | ------------------------------------------------ |
-| Phase            | 0 — environment and skeleton                     |
-| Block            | 0.6 — documentation restructure                  |
-| Current step     | 0.6.7 — retire the old `STATE.md` and `RULES.md` |
-| Blockers         | none                                             |
-| Currently broken | nothing                                          |
+|                  |                                                                                                                                  |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------- | --- |
+| Phase            | 0 — environment and skeleton                                                                                                     |
+| Block            | 0.4 — the API package                                                                                                            |
+| Current step     | 0.4.4c — `nest-cli.json`, the build tool's config                                                                                |
+| Blockers         | none                                                                                                                             |
+| Currently broken | `pnpm --filter @tailoring/api dev` — no `nest-cli.json` yet, so the Nest tool cannot find the source. Fixed by the current step. |     |
 
 ---
 
 ## 3. Current step in detail
 
-### Step 0.6.7 — retire the old documentation
+### Step 0.4.4c — configure the Nest command-line tool
 
-|         |                                                          |
-| ------- | -------------------------------------------------------- |
-| Touches | `STATE.md` and `RULES.md`, both at the repo root         |
-| Action  | delete both — every fact in them now lives in `docs/`    |
-| Test    | `docs/` holds 6 files · the repo root holds neither file |
-| Commit  | `docs: split STATE and RULES into six focused documents` |
-
-Nothing is lost. Where each part went is recorded in `HISTORY.md`, block 0.6.
+|         |                                                                        |
+| ------- | ---------------------------------------------------------------------- |
+| Touches | `apps/api/nest-cli.json` — CREATE                                      |
+| Action  | tell the `nest` tool where the source is and which tsconfig to use     |
+| Test    | `pnpm --filter @tailoring/api exec nest build` creates `dist/main.js`  |
+| Commit  | `config(api): add nest-cli.json so the build tool can find the source` |
 
 ---
 
 ## 4. Next 3 steps only
 
-| Step   | File                             | Goal                                               |
-| ------ | -------------------------------- | -------------------------------------------------- | --- |
-| 0.4.4b | `apps/api/src/main.ts`           | the bootstrap file: the switch that starts the app |
-| 0.4.4c | `apps/api/nest-cli.json`         | tell the Nest tooling where the source lives       |
-| 0.4.5  | `apps/api/src/app.controller.ts` | a health endpoint that answers in the browser      |     |
+| Step  | File                             | Goal                                        |
+| ----- | -------------------------------- | ------------------------------------------- |
+| 0.4.5 | `apps/api/src/app.controller.ts` | one URL that answers in the browser         |
+| 0.4.6 | `apps/api/prisma/schema.prisma`  | the first schema + `DATABASE_URL` in `.env` |
+
+Only two steps are planned, on purpose. The step after 0.4.6 is decided once
+0.4.5 is finished.
 
 Goal of block 0.4 as a whole: the API server actually starts and prints its port.
 
-Never plan more than 3 steps ahead. The step after 0.4.4c is decided only once
-0.4.4c is finished.
+Note for 0.4.5: the word `endpoint` is still on the not-yet-taught list in
+`GLOSSARY.md` §3. It must be taught in that step before it is used.
 
 ---
 
@@ -69,6 +69,8 @@ E:\Codes\tailoring-nb
 │   ├── api/                   ← NestJS backend · package @tailoring/api
 │   │   ├── src/
 │   │   │   └── app.module.ts  ← verified
+│   │   │   └── main.ts        ← verified · entry point · port 3001
+│   │   ├── nest-cli.json      ← created in step 0.4.4c
 │   │   ├── package.json       ← ESM (D27) · has dev/build/start scripts
 │   │   └── tsconfig.json      ← valid
 │   └── web/                   ← Next.js frontend · empty, no package.json yet
@@ -88,9 +90,7 @@ E:\Codes\tailoring-nb
 ├── package.json               ← root manifest · devDeps · db: scripts
 ├── pnpm-workspace.yaml        ← workspace globs + allowBuilds allowlist
 ├── pnpm-lock.yaml
-├── tsconfig.json              ← base config · never compiled directly (D14)
-├── RULES.md                   ← DELETE in step 0.6.7
-└── STATE.md                   ← DELETE in step 0.6.7
+└──  tsconfig.json              ← base config · never compiled directly (D14)
 ```
 
 ---
@@ -123,6 +123,7 @@ Ordered by what blocks the most work right now.
 | 1   | `.env` has no `DATABASE_URL`                                                                           | Prisma cannot connect                                                            | step 0.4.6, before the first migration         |
 | 2   | `apps/web` and `packages/shared` have no `package.json`                                                | pnpm does not see them as workspaces, so `--filter` cannot target them           | when each one is actually started              |
 | 3   | The old `STATE.md` contained the local DB password in plain text, and it is already in the git history | harmless while the repo is private; unacceptable the moment a public repo exists | before creating the public showcase repo (D11) |
+| 4   | The API port `3001` is hardcoded in `main.ts`                                                          | changing it needs a code edit; production cannot override it                     | when `@nestjs/config` is wired up, after 0.4.6 |
 
 ---
 

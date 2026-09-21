@@ -141,3 +141,37 @@ listed as broken although it had already been fixed in an earlier session, and
 and `start` were already there. Both were found only by reading the real files
 with `Get-Content` instead of trusting the notes.
 **Lesson: before fixing something the docs call broken, look at the actual file.**
+
+---
+
+### Block 0.6 — closed
+
+| Step  | What was done                                                                                                                                | Verified by                                                         |
+| ----- | -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| 0.6.7 | The old root-level `STATE.md` and `RULES.md` were deleted by the user. Every fact they held now lives in one of the six files under `docs/`. | the repo root contains neither file · `docs/` holds exactly 6 files |
+
+Block 0.6 is now closed. From here on, `docs/` is the only documentation location.
+
+---
+
+### Block 0.4 — continued (2)
+
+| Step   | What was done                                                                                                                                                                                                                                                                                       | Verified by                                                        |
+| ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| 0.4.4b | `apps/api/src/main.ts` created — the entry point. It imports `NestFactory` and `AppModule`, declares `const API_PORT = 3001`, and an `async function bootstrap()` that awaits `NestFactory.create(AppModule)`, awaits `app.listen(API_PORT)`, then logs the URL. The last line calls `bootstrap()`. | `pnpm --filter @tailoring/api exec tsc --noEmit` returned silently |
+
+**The `.js` extension rule proved itself in practice.**
+`main.ts` imports `./app.module.js` while the file on disk is `app.module.ts`.
+This is not a typo — it is the direct consequence of D27. In an ESM package the
+import path must name the file that will EXIST AT RUNTIME, not the source file.
+TypeScript resolves `.js` back to the `.ts` source at compile time.
+**Rule of thumb: every relative import inside `apps/api` ends in `.js`.**
+
+**A second documentation drift was confirmed and closed.**
+`HISTORY.md` step 0.4.2 says `apps/api/package.json` had "no scripts yet". The
+real file was read with `Get-Content` and it already contains three scripts:
+`dev` (`nest start --watch`), `build` (`nest build`), `start`
+(`node dist/main.js`). They were added at some point without ever being
+recorded. They are now documented in `ENVIRONMENT.md` §7.
+The 0.4.2 row above is left untouched on purpose: `HISTORY.md` is append-only,
+so history is corrected by a later entry, never by editing an older one.

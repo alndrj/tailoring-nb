@@ -42,10 +42,16 @@ They will be chosen in step 0.4.6 with the first schema, and added here then.
 These have been explained in chat with a real-world analogy. Do not explain them
 from zero again — build on them.
 
-**NestJS:** `Module` · root module (`AppModule`) · `Decorator` · `Controller` ·
-`Provider` / `Service`
+**TypeScript:** `import` · `export` · `--noEmit` · `const` ·
+template string (backticks + `${}`) · the `.js` import rule in ESM (D27)
 
-**TypeScript:** `import` · `export` · `--noEmit`
+**Asynchronous code:** `Promise` (the receipt you get instead of the result) ·
+`await` (wait here until the receipt becomes a real value) ·
+`async` (the label on a function that is allowed to pause)
+
+**NestJS:** `Module` · root module (`AppModule`) · `Decorator` · `Controller` ·
+`Provider` / `Service` · entry point (`main.ts`) · `bootstrap` ·
+`NestFactory` (the workshop that turns the blueprint into a running app)
 
 **Tooling & infrastructure:** monorepo · workspace / package · container ·
 port mapping · named volume · environment drift
