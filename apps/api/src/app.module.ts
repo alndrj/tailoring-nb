@@ -1,3 +1,4 @@
+import { HealthController } from "./health/health.controller.js";
 import { Module } from "@nestjs/common";
 
 /**
@@ -6,7 +7,7 @@ import { Module } from "@nestjs/common";
  */
 @Module({
   imports: [], // other modules this one needs
-  controllers: [], // classes that answer HTTP requests
+  controllers: [HealthController], // classes that answer HTTP requests
   providers: [], // classes that hold logic (services, repositories)
 })
 export class AppModule {}

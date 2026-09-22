@@ -23,7 +23,7 @@ their orders, and the money.
 | ---------------- | ---------------------------------------------------------------------------------------- |
 | Phase            | 0 — environment and skeleton                                                             |
 | Block            | 0.4 — the API package                                                                    |
-| Current step     | 0.4.5 — the first real route                                                             |
+| Current step     | 0.4.5b — move the logic into a service                                                   |
 | Blockers         | none                                                                                     |
 | Currently broken | nothing. The API compiles, starts, and listens on port 3001. It simply has no routes yet |
 
@@ -31,25 +31,17 @@ their orders, and the money.
 
 ## 3. Current step in detail
 
-### Step 0.4.5a — the first controller
-
-|         |                                                                              |
-| ------- | ---------------------------------------------------------------------------- |
-| Touches | `apps/api/src/health/health.controller.ts` — CREATE · `app.module.ts` — EDIT |
-| Action  | one URL, `/health`, that answers with `{"status":"ok"}`                      |
-| Concept | controller · HTTP GET · endpoint (must be taught — `GLOSSARY.md` §3)         |
-| Test    | `http://localhost:3001/health` returns `{"status":"ok"}` in the browser      |
-| Commit  | `feat(api): add a health endpoint`                                           |
+### Step 0.4.5b:move the logic into a service
 
 ---
 
 ## 4. Next 3 steps only
 
-| Step   | File                                       | Goal                                            |
-| ------ | ------------------------------------------ | ----------------------------------------------- |
-| 0.4.5a | `apps/api/src/health/health.controller.ts` | one URL that answers in the browser             |
-| 0.4.5b | `apps/api/src/health/health.service.ts`    | move the logic out of the controller · teach DI |
-| 0.4.6  | `apps/api/prisma/schema.prisma`            | the first schema + `DATABASE_URL` in `.env`     |
+| Step   | File                                    | Goal                                            |
+| ------ | --------------------------------------- | ----------------------------------------------- |
+|        |                                         |                                                 |
+| 0.4.5b | `apps/api/src/health/health.service.ts` | move the logic out of the controller · teach DI |
+| 0.4.6  | `apps/api/prisma/schema.prisma`         | the first schema + `DATABASE_URL` in `.env`     |
 
 Goal of block 0.4 as a whole: ACHIEVED on 2026-09-21 — the API server starts and
 prints its port. What remains in the block is making it answer a request.
@@ -69,6 +61,8 @@ E:\Codes\tailoring-nb
 ├── apps/
 │   ├── api/                   ← NestJS backend · package @tailoring/api
 │   │   ├── src/
+│   │   │   ├── health/
+│   │   │   │   └── health.controller.ts  ← verified · GET /health
 │   │   │   ├── app.module.ts  ← verified
 │   │   │   └── main.ts        ← verified · entry point · port 3001 (D29)
 │   │   ├── nest-cli.json      ← verified in 0.4.4c
@@ -114,14 +108,13 @@ None of these is started. Phase 0 is still about the skeleton.
 
 ## 7. Known issues and tech debt
 
-| #   | Issue                                                                                                  | Impact                                                                           | When to pay it                                  |
-| --- | ------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------- | ----------------------------------------------- |
-| 1   | `.env` has no `DATABASE_URL`                                                                           | Prisma cannot connect                                                            | step 0.4.6, before the first migration          |
-| 2   | `apps/web` and `packages/shared` have no `package.json`                                                | pnpm reports `Scope: all 2 workspace projects` — it does not see them at all     | when each one is actually started               |
-| 3   | The old `STATE.md` contained the local DB password in plain text, and it is already in the git history | harmless while the repo is private; unacceptable the moment a public repo exists | before creating the public showcase repo (D11)  |
-| 4   | The API port `3001` is a hardcoded constant in `main.ts` (D29)                                         | production cannot override it without a code edit                                | when `@nestjs/config` is wired up, after 0.4.6  |
-| 5   | `@nestjs/config` is installed but not used anywhere yet                                                | an unused dependency is a promise the code has not kept                          | same step as item 4                             |
-| 6   | The `☑️` in the `main.ts` log line may be stored in the wrong encoding                                 | if source files are not UTF-8, every Persian string in phase 1 will be corrupted | check now, fix before any Persian text is added |
+| #   | Issue                                                                                                  | Impact                                                                           | When to pay it                                 |
+| --- | ------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------- | ---------------------------------------------- |
+| 1   | `.env` has no `DATABASE_URL`                                                                           | Prisma cannot connect                                                            | step 0.4.6, before the first migration         |
+| 2   | `apps/web` and `packages/shared` have no `package.json`                                                | pnpm reports `Scope: all 2 workspace projects` — it does not see them at all     | when each one is actually started              |
+| 3   | The old `STATE.md` contained the local DB password in plain text, and it is already in the git history | harmless while the repo is private; unacceptable the moment a public repo exists | before creating the public showcase repo (D11) |
+| 4   | The API port `3001` is a hardcoded constant in `main.ts` (D29)                                         | production cannot override it without a code edit                                | when `@nestjs/config` is wired up, after 0.4.6 |
+| 5   | `@nestjs/config` is installed but not used anywhere yet                                                | an unused dependency is a promise the code has not kept                          | same step as item 4                            |
 
 **Closed:** `dist/` being committed by accident — verified on 2026-09-21 that
 `.gitignore` already covers it. No action needed.
@@ -134,7 +127,7 @@ None of these is started. Phase 0 is still about the skeleton.
 | --------------------------------------------------------- | ------------------------------------------------------------------------ |
 | ~~API port and Web port~~                                 | DECIDED — API `3001`, Web `3000` reserved. See D29                       |
 | Why did `pnpm add -E` not strip the caret on pnpm 12.4.1? | low priority; the manual fix is verified. Matters before relying on `-E` |
-| Are the source files saved as UTF-8?                      | see §7 item 6 — must be answered before phase 1                          |
+|                                                           |
 | Measurement field names (chest, waist, ...)               | decide in step 0.4.6 with the first schema, then add to `GLOSSARY.md`    |
 | Native mobile technology                                  | PWA first is locked; native is postponed on purpose                      |
 | SMS provider                                              | not chosen                                                               |

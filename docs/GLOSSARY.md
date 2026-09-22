@@ -54,7 +54,12 @@ the other (D28)
 
 **NestJS:** `Module` · root module (`AppModule`) · `Decorator` · `Controller` ·
 `Provider` / `Service` · entry point (`main.ts`) · `bootstrap` ·
-`NestFactory` (the workshop that turns the blueprint into a running app)
+`NestFactory` (the workshop that turns the blueprint into a running app) ·
+`endpoint` — one door into the API: a URL plus a request type. `/health` with
+GET and `/health` with POST are two different endpoints. A controller is the
+person standing behind the door; the endpoint is the door itself ·
+`GET` / `POST` — the request type. GET means "I want to see", POST means
+"I want to create". Typing a URL in the browser is always a GET
 
 **Tooling & infrastructure:** monorepo · workspace / package · container ·
 port mapping · named volume · environment drift ·
@@ -74,4 +79,4 @@ post-mortem · technical debt · MVP
 Do not use these in chat until they are taught and moved to section 2.
 
 `dependency injection` · `middleware` · `guard` · `pipe` · `interceptor` ·
-`DTO` · `migration` · `seed` · `endpoint` · `ORM` · `transaction` · `index`
+`DTO` · `migration` · `seed` · `ORM` · `transaction` · `index`

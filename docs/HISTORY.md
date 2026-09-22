@@ -238,3 +238,31 @@ All four were found by reading the real file instead of the notes:
 quoted the docs from memory twice — for the log message and for the port
 variable — and was wrong both times. `RULES.md` §0 already forbids it:
 never claim to have read a file that was not provided.**
+
+---
+
+### Block 0.4 — continued (4)
+
+| Step   | What was done                                                                                                                                               | Verified by                                                                         |
+| ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| 0.4.5a | `apps/api/src/health/health.controller.ts` created — a `HealthController` with `@Controller('health')` and one `@Get()` method returning `{ status: 'ok' }` | browser at `http://localhost:3001/health` returned `{"status":"ok"}`                |
+| 0.4.5a | `app.module.ts` edited — `HealthController` imported (with the `.js` extension, D27) and registered in the `controllers` array                              | terminal logged `Mapped {/health, GET} route` · `/` still returns 404, as it should |
+
+**Why two files in one step.**
+`RULES.md` §3 asks for one file per step, but it also forbids splitting a file in
+a way that leaves it untestable. A controller that is never registered in a module
+is invisible to NestJS, so there would have been nothing to test. The two files are
+one indivisible unit and this was announced before the step started.
+
+**Why the controller returns the object directly, for now.**
+`RULES.md` §7 says a controller carries no business logic. Here the "logic" is the
+single word `ok`, so a service would have been ceremony with no benefit. It is
+corrected in 0.4.5b — deliberately, so that dependency injection is taught on code
+that already works rather than on an empty example.
+
+**Encoding scare — resolved, and it was the reader, not the file.**
+`Get-Content` rendered the `☑️` in `main.ts` as `â˜‘ï¸`. The file is fine; VS Code
+reports UTF-8. `Get-Content` defaults to the Windows ANSI codepage, not UTF-8.
+**Lesson: read files containing Persian text or emoji with
+`Get-Content -Encoding utf8`, otherwise the terminal invents a problem that
+does not exist.**
