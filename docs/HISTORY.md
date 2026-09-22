@@ -266,3 +266,39 @@ reports UTF-8. `Get-Content` defaults to the Windows ANSI codepage, not UTF-8.
 **Lesson: read files containing Persian text or emoji with
 `Get-Content -Encoding utf8`, otherwise the terminal invents a problem that
 does not exist.**
+
+---
+
+### Block 0.4 — closed
+
+| Step   | What was done                                                                                                                                            | Verified by                                                         |
+| ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| 0.4.5b | `apps/api/src/health/health.service.ts` created — a `@Injectable()` class holding the `check()` method that was previously inside the controller         | no `Nest can't resolve dependencies` error at startup               |
+| 0.4.5b | `health.controller.ts` rewritten — it now declares `constructor(private readonly healthService: HealthService)` and returns `this.healthService.check()` | `GET /health` still returns `{"status":"ok"}` — behaviour unchanged |
+| 0.4.5b | `app.module.ts` edited — `HealthService` imported (`.js`, D27) and registered in `providers`                                                             | `AppModule dependencies initialized` logged with a real dependency  |
+
+**Why the output did not change, and why that is the point.**
+This step was a refactor: same external behaviour, better internal structure. If
+the browser response had changed, something would have been broken. The value is
+structural — `RULES.md` §7 requires controller → service → prisma, and the
+pattern was learned on code that already worked rather than while also fighting
+Prisma in 0.4.6.
+
+**Concept established — dependency injection.**
+The controller never writes `new HealthService()`. It declares in its constructor
+what it needs, and NestJS's container hands over the single instance it built at
+startup. Three problems this avoids:
+
+1. ten controllers calling `new` would create ten instances — and later, ten
+   database connections where one was enough;
+2. when `HealthService` eventually needs `PrismaService`, the controller would
+   have had to know the entire internal structure of something unrelated to it;
+3. a hardcoded `new` cannot be swapped for a fake in a test.
+
+`providers` and `controllers` are not interchangeable: `controllers` means
+"these answer HTTP requests", `providers` means "build these once and hand them
+to whoever asks".
+
+**Block 0.4 is now complete.** The API compiles, starts, listens on port 3001,
+answers `GET /health`, and follows the controller → service layering from the
+very first endpoint.

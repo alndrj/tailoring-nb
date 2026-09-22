@@ -8,7 +8,7 @@
 >
 > Append only. A word is never renamed here without renaming it in the code too.
 >
-> Last updated: 2026-09-21 (1405/06/30)
+> Last updated: 2026-09-22 (1405/06/31)
 
 ---
 
@@ -46,7 +46,9 @@ from zero again — build on them.
 template string (backticks + `${}`) · the `.js` import rule in ESM (D27) ·
 programmatic API vs CLI — two doors into the same tool: the CLI is for humans,
 the programmatic API is for other programs, and a version can ship one without
-the other (D28)
+the other (D28)· constructor parameter properties — writing `private` or `readonly` on a
+constructor parameter makes TypeScript assign it to the instance automatically,
+which is why such a constructor has an empty body
 
 **Asynchronous code:** `Promise` (the receipt you get instead of the result) ·
 `await` (wait here until the receipt becomes a real value) ·
@@ -59,7 +61,12 @@ the other (D28)
 GET and `/health` with POST are two different endpoints. A controller is the
 person standing behind the door; the endpoint is the door itself ·
 `GET` / `POST` — the request type. GET means "I want to see", POST means
-"I want to create". Typing a URL in the browser is always a GET
+"I want to create". Typing a URL in the browser is always a GET ·
+`@Injectable()` — the label that makes a class eligible to be handed to others ·
+`dependency injection` — a class declares in its constructor what it needs and
+NestJS delivers it. You hire a tailor, you do not build one. Nobody writes `new` ·
+`container` — the part of NestJS that builds one instance of every provider at
+startup, keeps it, and hands out that same instance on request
 
 **Tooling & infrastructure:** monorepo · workspace / package · container ·
 port mapping · named volume · environment drift ·

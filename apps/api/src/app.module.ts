@@ -1,5 +1,6 @@
 import { HealthController } from "./health/health.controller.js";
 import { Module } from "@nestjs/common";
+import { HealthService } from "./health/health.service.js";
 
 /**
  * Root module of the API.
@@ -8,6 +9,6 @@ import { Module } from "@nestjs/common";
 @Module({
   imports: [], // other modules this one needs
   controllers: [HealthController], // classes that answer HTTP requests
-  providers: [], // classes that hold logic (services, repositories)
+  providers: [HealthService], // classes that hold logic (services, repositories)
 })
 export class AppModule {}

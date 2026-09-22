@@ -6,7 +6,7 @@
 > Nothing here is permanent. Permanent things live in `DECISIONS.md`.
 > Finished work lives in `HISTORY.md`. Rules live in `RULES.md`.
 >
-> Updated: 2026-09-19 (1405/06/28) · session 6
+> Updated: 2026-09-22 (1405/06/31) · session 6
 
 ---
 
@@ -17,75 +17,77 @@ their orders, and the money.
 
 ---
 
+> Updated: 2026-09-22 (1405/07/01) · session 7
+
 ## 2. Where we are
 
-|                  |                                                                                          |
-| ---------------- | ---------------------------------------------------------------------------------------- |
-| Phase            | 0 — environment and skeleton                                                             |
-| Block            | 0.4 — the API package                                                                    |
-| Current step     | 0.4.5b — move the logic into a service                                                   |
-| Blockers         | none                                                                                     |
-| Currently broken | nothing. The API compiles, starts, and listens on port 3001. It simply has no routes yet |
+|                  |                                                                                     |
+| ---------------- | ----------------------------------------------------------------------------------- |
+| Phase            | 0 — environment and skeleton                                                        |
+| Block            | 0.4 — the API package · **COMPLETE**                                                |
+| Next block       | 0.4.6 — the database schema                                                         |
+| Blockers         | none                                                                                |
+| Currently broken | nothing. The API compiles, starts, and answers `GET /health` with `{"status":"ok"}` |
 
 ---
 
 ## 3. Current step in detail
 
-### Step 0.4.5b:move the logic into a service
+Block 0.4 is closed. The next step is designed at the start of the next session,
+per `RULES.md` §3 — a feature is designed right before it is built.
+
+### Step 0.4.6 — the first Prisma schema (outline only)
+
+|         |                                                                                             |
+| ------- | ------------------------------------------------------------------------------------------- |
+| Touches | `apps/api/prisma/schema.prisma` — CREATE · `.env` and `.env.example` — EDIT                 |
+| Action  | add `DATABASE_URL`, then define the first model                                             |
+| Concept | `ORM` · `migration` · `schema` — all three still on the not-yet-taught list (`GLOSSARY` §3) |
+| Note    | will need splitting into 0.4.6a/b/c — it touches three files and carries three new concepts |
 
 ---
 
 ## 4. Next 3 steps only
 
-| Step   | File                                    | Goal                                            |
-| ------ | --------------------------------------- | ----------------------------------------------- |
-|        |                                         |                                                 |
-| 0.4.5b | `apps/api/src/health/health.service.ts` | move the logic out of the controller · teach DI |
-| 0.4.6  | `apps/api/prisma/schema.prisma`         | the first schema + `DATABASE_URL` in `.env`     |
+| Step   | File                            | Goal                                              |
+| ------ | ------------------------------- | ------------------------------------------------- |
+| 0.4.6a | `.env` · `.env.example`         | add `DATABASE_URL` · teach connection strings     |
+| 0.4.6b | `apps/api/prisma/schema.prisma` | the datasource block + the first model            |
+| 0.4.6c | —                               | the first migration · teach `migration` and `ORM` |
 
-Goal of block 0.4 as a whole: ACHIEVED on 2026-09-21 — the API server starts and
-prints its port. What remains in the block is making it answer a request.
-
-Note for 0.4.5a: `endpoint` is still on the not-yet-taught list in
-`GLOSSARY.md` §3. It must be taught in that step before it is used.
-`controller` is already in §2 and must be built on, not re-explained from zero.
+Only three steps are planned, on purpose.
 
 ---
 
 ## 5. Project structure
 
-Folders and key files only. Never list `node_modules`, `.git`, `dist`, `.next`.
-
-```
 E:\Codes\tailoring-nb
 ├── apps/
-│   ├── api/                   ← NestJS backend · package @tailoring/api
-│   │   ├── src/
-│   │   │   ├── health/
-│   │   │   │   └── health.controller.ts  ← verified · GET /health
-│   │   │   ├── app.module.ts  ← verified
-│   │   │   └── main.ts        ← verified · entry point · port 3001 (D29)
-│   │   ├── nest-cli.json      ← verified in 0.4.4c
-│   │   ├── package.json       ← ESM (D27) · TypeScript pinned 6.0.3 (D28)
-│   │   └── tsconfig.json      ← valid
-│   └── web/                   ← Next.js frontend · empty, no package.json yet
+│ ├── api/ ← NestJS backend · package @tailoring/api
+│ │ ├── src/
+│ │ │ ├── health/
+│ │ │ │ ├── health.controller.ts ← verified · GET /health
+│ │ │ │ └── health.service.ts ← verified · the logic behind it
+│ │ │ ├── app.module.ts ← verified · registers both
+│ │ │ └── main.ts ← verified · entry point · port 3001 (D29)
+│ │ ├── nest-cli.json ← verified in 0.4.4c
+│ │ ├── package.json ← ESM (D27) · TypeScript pinned 6.0.3 (D28)
+│ │ └── tsconfig.json ← valid
+│ └── web/ ← Next.js frontend · empty, no package.json yet
 ├── packages/
-│   └── shared/                ← shared types and utils · empty, no package.json yet
-├── docs/                      ← the six documents (D25)
-├── .env                       ← real values · never committed
-├── .env.example               ← fake values · committed
-├── .gitignore                 ← verified: covers dist/
-├── docker-compose.yml         ← the postgres service
-├── package.json               ← root manifest · db: and api: scripts
-├── pnpm-workspace.yaml        ← workspace globs + allowBuilds allowlist
+│ └── shared/ ← shared types and utils · empty, no package.json yet
+├── docs/ ← the six documents (D25)
+├── .env ← real values · never committed
+├── .env.example ← fake values · committed
+├── .gitignore ← verified: covers dist/
+├── docker-compose.yml ← the postgres service
+├── package.json ← root manifest · db: and api: scripts
+├── pnpm-workspace.yaml ← workspace globs + allowBuilds allowlist
 ├── pnpm-lock.yaml
-└── tsconfig.json              ← base config · never compiled directly (D14)
-```
+└── tsconfig.json ← base config · never compiled directly (D14)
 
 `apps/api/dist/` is produced by every build and is correctly git-ignored.
 It is never listed here (`RULES.md` §11).
-
----
 
 ## 6. MVP — 8 features
 

@@ -62,8 +62,12 @@ Nothing in this table is revisited without an explicit discussion.
 | D27     | `apps/api` is an ESM package: `"type": "module"` in its `package.json`, with `module` + `moduleResolution` both `node16` in its tsconfig                                                                                                                                                                       | NestJS 12 ships as pure ESM (`"type": "module"`, no CommonJS fallback), so a CommonJS file physically cannot import it. Consequence: every relative import inside `apps/api` must carry a `.js` extension, and `__dirname` is not available |
 
 | D28 | TypeScript is pinned to `6.0.3` everywhere — root and `apps/api`. Do not move to the 7.x line until 7.1 is released AND `nest build` is verified green against it | TypeScript 7.0 ships only the `tsc` executable and drops the programmatic compiler API that `@nestjs/cli`, `ts-node` and (later) Next.js all rely on. With 7.0.2 installed, `nest build` fails on its very first run |
+
 | D29 | The API listens on host port `3001`. The value is currently the constant `apiPort` inside `main.ts`; moving it into `.env` is still open tech debt (`PROJECT_STATUS.md` §7 item 4) | port `3000` is the Next.js default and is reserved for phase 1. Keeping the two apart avoids a collision that is confusing to diagnose. The number is locked even though its LOCATION is not yet final |
+
 | D30 | Build-critical tools are pinned to an EXACT version, with no caret. Currently `typescript` (D28) and `prisma` (D19). Ordinary runtime packages keep their caret | TypeScript can get stricter in a minor release, so a plain `pnpm install` can break a build in which not one line of code changed — and leaves no clue what changed. An exact number also tells the next reader the version is deliberate |
+
+| D31 | Every endpoint follows controller → service from the very first one, even when the logic is a single constant. A controller never contains business logic | `RULES.md` §7 already required the layering; D31 fixes WHEN it starts. Adding the layer later means refactoring every endpoint at once, and the pattern is much harder to learn while also fighting a database |
 
 ---
 
