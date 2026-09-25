@@ -302,3 +302,58 @@ to whoever asks".
 **Block 0.4 is now complete.** The API compiles, starts, listens on port 3001,
 answers `GET /health`, and follows the controller → service layering from the
 very first endpoint.
+
+---
+
+### Block 0.4.6 — Prisma configuration
+
+| Step   | What was done                                                                                                                                                               | Verified by                         |
+| ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| 0.4.6a | `DATABASE_URL` added to the root `.env` and to `.env.example` with fake values                                                                                              | `.env` still git-ignored            |
+| 0.4.6b | `apps/api/prisma/schema.prisma` created — `generator client` using the new `prisma-client` provider, output `../src/generated/prisma`; `datasource db` with `provider` only | `prisma validate` passed            |
+| 0.4.6b | Model `Workshop` written: `id` uuid, `name` varchar(120), `createdAt`/`updatedAt` as `@db.Timestamptz(3)`, mapped to the table `workshops`                                  | `prisma format` left it unchanged   |
+| 0.4.6c | `apps/api/prisma.config.ts` created — it calls `process.loadEnvFile()` on the repo-root `.env` and supplies the datasource URL                                              | Prisma CLI resolved the connection  |
+| 0.4.6c | `src/generated/` added to `.gitignore` (D32)                                                                                                                                | `git status` no longer lists it     |
+| 0.4.6c | `apps/api/tsconfig.build.json` created and `tsconfig.json` converted to `noEmit: true` (D41, D42). `nest-cli.json` repointed at the build config                            | `nest build` still produced `dist/` |
+
+**Trap — Prisma 7 stopped reading `.env` for you.**
+Earlier versions loaded a `.env` file automatically. Prisma 7 does not. The
+connection string therefore has to be loaded explicitly, and the natural place
+is `prisma.config.ts`, which Node runs before the CLI does any work. This is why
+`datasource db` now carries only `provider`: the URL arrives from the config file
+instead of from `env("DATABASE_URL")` inside the schema.
+
+**Trap — one tsconfig cannot serve both the editor and the compiler.**
+`prisma.config.ts` lives OUTSIDE `src/`. The editor must see it, or it gets no
+type-checking at all. The compiler must NOT see it, because including a file
+above `rootDir` pushes `rootDir` up one level, and every emitted path silently
+gains an extra directory — `dist/src/main.js` instead of `dist/main.js`, which
+breaks the `start` script without any error message.
+
+The fix was to split the two jobs:
+
+| File                  | Sees                            | Emits |
+| --------------------- | ------------------------------- | ----- |
+| `tsconfig.json`       | `src/**/*` + `prisma.config.ts` | no    |
+| `tsconfig.build.json` | `src/**/*` only                 | yes   |
+
+`rootDir`, `outDir` and `noEmit: false` now exist in exactly one file — the only
+one that compiles. Recorded as D41 and D42.
+
+**Lesson: when a config has to answer two different questions, the answer is two
+configs, not a cleverer single one.**
+
+**A wrong guess, caught before it cost anything.**
+The assistant assumed the tsconfig split existed to keep `src/generated/` out of
+the build. It did not — the real reason was `prisma.config.ts` sitting outside
+`src/`. The assumption was checked against the actual files with `git diff` and
+`Get-Content` before any code was written, so nothing was built on top of it.
+**Lesson: `RULES.md` §0 is not paperwork. Read the file, then act.**
+
+---
+
+### Block 0.4.6 — not finished yet
+
+No migration has been created. `prisma migrate dev` has not been run, so the
+`workshops` table does not exist in Postgres. The schema is written and valid;
+the database has not been told about it. This is step 0.4.6d.
