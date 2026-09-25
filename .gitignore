@@ -28,3 +28,6 @@ Desktop.ini
 
 # Editor settings (personal, not part of the project)
 .idea/
+
+# Prisma generated client
+apps/api/src/generated/

@@ -29,11 +29,12 @@
     "declarationMap": false,
     "composite": false,
 
-    // Where code comes from and where the compiled output goes
-    "rootDir": "./src",
-    "outDir": "./dist"
+    // This config never emits: it exists for the editor and for
+    // `tsc --noEmit`. The output boundary (rootDir/outDir) lives in
+    // tsconfig.build.json, which is the only config that compiles.
+    "noEmit": true
   },
 
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "prisma.config.ts"],
   "exclude": ["node_modules", "dist"]
 }

@@ -17,8 +17,6 @@ their orders, and the money.
 
 ---
 
-> Updated: 2026-09-22 (1405/07/01) · session 7
-
 ## 2. Where we are
 
 |                  |                                                                                     |

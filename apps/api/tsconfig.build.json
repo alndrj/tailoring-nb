@@ -1,0 +1,21 @@
+{
+  // Build-only config. The editor never uses this file.
+  // Purpose: keep the compiled output limited to src/, so that helper
+  // files living outside src/ (prisma.config.ts, future scripts) can be
+  // type-checked by the editor without ever reaching dist/.
+  "extends": "./tsconfig.json",
+
+  // The output boundary lives here, not in the parent: only this file
+  // actually emits JavaScript. The editor emits nothing and does not
+  // need it.
+  "compilerOptions": {
+    "noEmit": false,
+    "rootDir": "./src",
+    "outDir": "./dist"
+  },
+
+  // Overrides the wider "include" of tsconfig.json: only src/ is compiled.
+  "include": ["src/**/*"],
+
+  "exclude": ["node_modules", "dist", "prisma.config.ts"]
+}
