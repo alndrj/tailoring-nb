@@ -2,8 +2,6 @@
 
 > The working contract. It almost never changes.
 > Re-send this file every 5–6 sessions, or whenever the assistant starts drifting.
->
-> Version 2 · Updated: 2026-09-19 (1405/06/28)
 
 ---
 
@@ -149,6 +147,11 @@ change touches many separate places.
 - No abbreviations in public names: `customer`, not `cust`.
 - No new dependency without asking first, with a plain-Persian reason
   (`DECISIONS.md` → D8).
+- Upgrading an existing dependency is its own step, never a side effect of
+  another one. A tool and its runtime client are upgraded together, in the same
+  step, to the same exact version (`DECISIONS.md` → D44).
+- Release candidates and beta versions are not installed. Wait for the stable
+  release.
 - Respect every locked decision in `DECISIONS.md`. If a request conflicts with
   one, say so and STOP — do not silently pick a side.
 
@@ -164,6 +167,11 @@ change touches many separate places.
 - Never trust an id sent by the client. Check ownership first (`DECISIONS.md` → D3).
 - Each business concept (customer, measurement, order) is its own NestJS module.
 - Ask before changing a schema that already has a migration.
+- A migration that has been applied or pushed is frozen: never rename it, never
+  edit it, never delete it. A mistake is corrected by a NEW migration on top of
+  it, never by rewriting the old one (`DECISIONS.md` → D43).
+- Renaming a migration is allowed only while it exists on one machine and has
+  not been applied anywhere else. That window closes fast; assume it is shut.
 
 ---
 

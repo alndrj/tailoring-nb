@@ -8,7 +8,7 @@
 > This file exists so that `PROJECT_STATUS.md` can stay short, and so that a
 > problem already solved once is never debugged from zero again.
 >
-> Last updated: 2026-09-22 (1405/06/31)
+> Last updated: 2026-09-26 (1405/07/04)
 
 ---
 
@@ -357,3 +357,20 @@ the build. It did not — the real reason was `prisma.config.ts` sitting outside
 No migration has been created. `prisma migrate dev` has not been run, so the
 `workshops` table does not exist in Postgres. The schema is written and valid;
 the database has not been told about it. This is step 0.4.6d.
+
+### Block 0.4.6 — finished (2026-09-26 / 1405/07/04)
+
+Supersedes the "not finished yet" entry above. That entry was true when it was
+written; it is kept because this file is append only.
+
+- 0.4.6d: first migration created and applied with `prisma migrate dev`.
+  Folder: `20260926061156_create_workshops`. The `workshops` table now exists in Postgres
+  and was confirmed with `psql`.
+- The migration folder was renamed once, before being pushed or applied
+  anywhere else. From now on it is frozen (D43).
+- Prisma showed an `Update available` notice (8.0.0-rc). Ignored on purpose (D44).
+- Decisions added: D43 (migration freeze), D44 (Prisma upgrades only in a
+  dedicated step, CLI and client together).
+- `ENVIRONMENT.md` updated to record the first migration.
+
+Next: 0.4.7a.

@@ -3,7 +3,7 @@
 > Facts only. No rules (see `RULES.md`), no reasoning (see `DECISIONS.md`).
 > Whenever a version, port or script changes, update it here in the SAME commit.
 >
-> Last verified: 2026-09-25 (1405/07/03)
+> Last verified: 2026-09-26 (1405/07/04)
 
 ---
 
@@ -110,7 +110,8 @@ See `DECISIONS.md` → D16.
 | Generator provider    | `prisma-client` (the modern one, not `prisma-client-js`)        |
 | Generated client path | `apps/api/src/generated/prisma` — git-ignored (D32)             |
 | Datasource block      | carries `provider` only · the URL comes from `prisma.config.ts` |
-| Migrations folder     | `apps/api/prisma/migrations/` — does not exist yet              |
+| Migrations folder     | `apps/api/prisma/migrations/` — committed                       |
+| Applied migrations    | `20260926061156_create_workshops`                               |
 | Models defined        | `Workshop` → table `workshops`                                  |
 
 Prisma 7 no longer reads `.env` by itself. `prisma.config.ts` calls
@@ -143,8 +144,20 @@ Run every command from the repo root: `E:\Codes\tailoring-nb`
 | `pnpm db:up`    | start the database in the background        |
 | `pnpm db:down`  | stop the database (data is kept)            |
 | `pnpm db:logs`  | watch database logs live — `Ctrl+C` to exit |
-| `pnpm db:psql`  | open a SQL shell inside the container       |
+| `pnpm db:psql`  | open a psql shell inside the container      |
 | `pnpm db:reset` | DESTROY all data and start fresh ⚠️         |
+
+### Inside psql
+
+| Command        | What it does                          |
+| -------------- | ------------------------------------- |
+| `\dt`          | list tables                           |
+| `\d <table>`   | show columns and indexes of one table |
+| `SELECT ... ;` | read data · must end with `;`         |
+| `\q`           | quit psql                             |
+
+A `\` command takes the REST OF THE LINE as its arguments.
+Put every `\` command on its own line.
 
 ### Prisma
 
@@ -218,3 +231,5 @@ All of them need `apps/api/nest-cli.json`, created in step 0.4.4c.
   check (D30).
 - Read files containing Persian text or emoji with `Get-Content -Encoding utf8`,
   otherwise the terminal shows mojibake that is not in the file.
+- Prisma 7.10.0 prints `Update available 7.10.0 -> 8.0.0-rc.17`. The suggested
+  `npm i` commands are wrong for this pnpm monorepo and are NOT run.
