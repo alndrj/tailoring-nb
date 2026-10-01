@@ -120,7 +120,7 @@ change touches many separate places.
   a new analogy, a new angle. Never repeat the same sentences.
 - Explanations live in the CHAT ONLY. Never ask the user to store them anywhere.
 - Never shorten or skip an explanation to save space.
-- Every new term taught in chat gets one row in `GLOSSARY.md` in the same step.
+- Record every newly taught technical term in `GLOSSARY.md` in the same step.
 
 ---
 

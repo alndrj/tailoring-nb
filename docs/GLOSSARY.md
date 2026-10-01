@@ -3,8 +3,7 @@
 > Two jobs:
 >
 > 1. one Persian word → exactly one name in code, forever
-> 2. a record of every technical term already taught to the user, with the
->    analogy that was used
+> 2. a record of every technical term already taught to the user
 >
 > Append only. A word is never renamed here without renaming it in the code too.
 >
@@ -15,6 +14,7 @@
 ## 1. Domain words (the tailoring business)
 
 These names are binding. Use them in tables, classes, files, folders and URLs.
+Record newly taught technical terms in section 2; they do not need a separate row.
 
 | فارسی      | code          | notes                                                |
 | ---------- | ------------- | ---------------------------------------------------- |
@@ -39,8 +39,8 @@ They will be chosen when the measurement model is designed, and added here then.
 
 ## 2. Technical terms already taught
 
-Explained in chat with a real-world analogy. Do not explain them from zero
-again — build on them.
+Recorded after being taught in chat. Do not explain them from zero again — build
+on them.
 
 ### TypeScript
 
