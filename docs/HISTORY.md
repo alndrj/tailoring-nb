@@ -374,3 +374,18 @@ written; it is kept because this file is append only.
 - `ENVIRONMENT.md` updated to record the first migration.
 
 Next: 0.4.7a.
+
+---
+
+### Block 0.4.7 — Prisma access (1)
+
+| Step   | What was done                                                                                                  | Verified by                                                                 |
+| ------ | -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| 0.4.7a | `apps/api/src/prisma/prisma.service.ts` created — an injectable `PrismaService` extends `PrismaClient` and calls `$connect()` in `onModuleInit()` | `pnpm api:build` completed: `nest build` finished with no error             |
+
+`PrismaService` is deliberately not registered in the API yet. Step 0.4.7b
+puts it in a global `PrismaModule`; step 0.4.7c registers that module in
+`AppModule`. Until then, NestJS does not instantiate the service or open the
+database connection during startup.
+
+Next: 0.4.7b.
