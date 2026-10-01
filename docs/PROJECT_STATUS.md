@@ -22,41 +22,39 @@ their orders, and the money.
 |                  |                                                                            |
 | ---------------- | -------------------------------------------------------------------------- |
 | Phase            | 0 — environment and skeleton                                               |
-| Block            | 0.4.6 — the database schema · **finished**                                 |
-| Next step        | 0.4.7a — `PrismaService`                                                   |
+| Block            | 0.4.7 — Prisma access · **in progress**                                    |
+| Next step        | 0.4.7b — global `PrismaModule`                                             |
 | Blockers         | none                                                                       |
-| Currently broken | nothing. The API compiles and answers `GET /health`. The `workshops` table |
-|                  | exists in Postgres, but no NestJS code talks to the database yet.          |
+| Currently broken | nothing. The API compiles and answers `GET /health`. `PrismaService` is    |
+|                  | written but not registered yet, so NestJS does not use it at startup.      |
 
 ---
 
 ## 3. Current step in detail
 
-### Step 0.4.7a — a `PrismaService` that connects on startup
+### Step 0.4.7b — a global `PrismaModule`
 
 |         |                                                                             |
 | ------- | --------------------------------------------------------------------------- |
-| Touches | `apps/api/src/prisma/prisma.service.ts` — CREATE                            |
-| Action  | wrap the generated Prisma client in an `@Injectable()` class that opens the |
-|         | connection when the app starts                                              |
-| Concept | lifecycle hook — code NestJS runs for you at a fixed moment (startup)       |
-| Why now | the table exists and the client is generated, but nothing in the API can    |
-|         | reach it. Dependency injection needs a provider to hand out                 |
+| Touches | `apps/api/src/prisma/prisma.module.ts` — CREATE                             |
+| Action  | put `PrismaService` in a global NestJS module and export it                 |
+| Concept | module — a labelled box that groups related providers                       |
+| Why now | the service exists, but no module tells NestJS where it belongs or makes it |
+|         | available to the rest of the API                                            |
 
-After that, step 0.4.7b makes that service global so every future module can
-inject it without importing it each time.
+After that, step 0.4.7c registers the module in `AppModule` and proves the
+connection is live.
 
 ---
 
-## 4. Next 3 steps only
+## 4. Next 2 steps only
 
 | Step   | File                           | Goal                                                 |
 | ------ | ------------------------------ | ---------------------------------------------------- |
-| 0.4.7a | `src/prisma/prisma.service.ts` | a `PrismaService` that connects on startup           |
 | 0.4.7b | `src/prisma/prisma.module.ts`  | make it global so every future module can inject it  |
 | 0.4.7c | `src/app.module.ts`            | register the module and prove the connection is live |
 
-Only three steps are planned, on purpose. Block 0.5 (the tenant root and the
+Only two steps are planned, on purpose. Block 0.5 (the tenant root and the
 first real models) is decided only after 0.4.7 is finished.
 
 ---
@@ -76,6 +74,8 @@ E:\Codes\tailoring-nb
 │ │ │ ├── health/
 │ │ │ │ ├── health.controller.ts ← verified · GET /health
 │ │ │ │ └── health.service.ts ← verified · the logic behind it
+│ │ │ ├── prisma/
+│ │ │ │ └── prisma.service.ts ← verified · opens the Prisma connection on module init
 │ │ │ ├── app.module.ts ← verified · registers both
 │ │ │ └── main.ts ← verified · entry point · port 3001 (D29)
 │ │ ├── nest-cli.json ← points at tsconfig.build.json (D41)
