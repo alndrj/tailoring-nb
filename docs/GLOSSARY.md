@@ -72,4 +72,4 @@ ubiquitous language-ADR (architecture decision record)-post-mortem-technical deb
 
 Do not use these in chat until they are taught and moved to section 2.
 
-middleware-guard-pipe-interceptor-DTO-migration-seed-transaction-index-foreign key-relation-cascade
+middleware-guard-pipe-interceptor-DTO-seed-transaction-index-foreign key-relation-cascade
