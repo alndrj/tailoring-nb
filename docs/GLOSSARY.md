@@ -7,7 +7,7 @@
 >
 > Append only. A word is never renamed here without renaming it in the code too.
 >
-> Last updated: 2026-09-26 (1405/07/04)
+> Last updated: 2026-10-01 (1405/07/09)
 
 ---
 

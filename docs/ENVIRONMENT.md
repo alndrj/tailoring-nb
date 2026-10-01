@@ -3,7 +3,7 @@
 > Facts only. No rules (see `RULES.md`), no reasoning (see `DECISIONS.md`).
 > Whenever a version, port or script changes, update it here in the SAME commit.
 >
-> Last verified: 2026-09-26 (1405/07/04)
+> Last verified: 2026-10-01 (1405/07/09)
 
 ---
 
