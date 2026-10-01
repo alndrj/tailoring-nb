@@ -6,7 +6,7 @@
 > Nothing here is permanent. Permanent things live in `DECISIONS.md`.
 > Finished work lives in `HISTORY.md`. Rules live in `RULES.md`.
 >
-> Updated: 2026-09-26 (1405/07/04)
+> Updated: 2026-10-01 (1405/07/09)
 
 ---
 
