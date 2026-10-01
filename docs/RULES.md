@@ -65,7 +65,8 @@ Numbering: Phase → Block → Step. Example: `1.2.1`
 
 One step =
 
-- ONE file touched
+- ONE implementation file, plus the mandatory documentation files required by
+  §11, all in the same single commit after the user's test passes
 - at most ONE new concept
 - ends in something the user can see or test
 - equals exactly one git commit
@@ -76,8 +77,9 @@ Sizing is a judgement call, not a line count:
   or skip explaining some lines — the step is too big. Split it.
 - Explanation quality is never traded for fewer steps.
 - Never split a file in a way that leaves it broken and untestable.
-- If a step would touch several files, split it into `1.2.1a`, `1.2.1b`, …
-  and say so BEFORE starting.
+- If a step would touch several implementation files, split it into `1.2.1a`,
+  `1.2.1b`, … and say so BEFORE starting. The documentation files required by
+  §11 are the only exception to the one-implementation-file limit.
 - Never plan more than 3 steps ahead. Decide the next block only when the
   current one is finished.
 - Design a feature right before building it — not earlier.
@@ -195,6 +197,9 @@ change touches many separate places.
 - Format: `type(scope): short imperative summary in English`
   - types: `feat` `fix` `chore` `docs` `refactor` `config` `db`
   - example: `config(api): add tsconfig for the API package`
+- After the user's test command for the step has passed, commit the one
+  implementation file and every documentation file required by §11 together in
+  that step's single commit.
 - Nothing is committed before its step's test command has passed.
 - Never commit: `.env`, `node_modules/`, `dist/`, `.next/`, secrets, DB dumps.
 - `pnpm-lock.yaml` and `pnpm-workspace.yaml` (including its `allowBuilds`
@@ -234,6 +239,10 @@ At the end of EVERY approved step, in this order:
 3. `DECISIONS.md` — only if a decision was locked.
 4. `ENVIRONMENT.md` — only if a version, port, credential or script changed.
 5. `GLOSSARY.md` — only if a new term appeared.
+
+Update every documentation file that applies to the step, then include those
+required files with the one implementation file in the step's single commit
+after the user's test command has passed.
 
 The project tree in `PROJECT_STATUS.md` lists folders and key files only.
 Never list `node_modules`, `.git`, `dist`, `.next`, or routine repeated files.
@@ -281,7 +290,8 @@ A step is done only when ALL of these are true:
 - [ ] its test command was run by the user and produced the expected output
 - [ ] the user understood WHY the step existed
 - [ ] the documents in §11 are updated
-- [ ] the commit is made
+- [ ] after the user's test passed, the one implementation file and every
+  required §11 documentation file were made in one single commit
 - [ ] the user said it is approved
 
 Partial credit does not exist. If any box is unchecked, the step is still open.
